@@ -12,6 +12,7 @@ namespace Client
     public class SimpleClient : Connection
     {
         private AsymmetricCipher asymCipher;
+        private int v;
 
         public SimpleClient(string ip, int port)
         {
@@ -21,6 +22,11 @@ namespace Client
                 this.Start(connection);
 
                 SetupConnection();   
+        }
+
+        public SimpleClient(int v)
+        {
+            this.v = v;
         }
 
         protected override void Command(NetworkMessage message)

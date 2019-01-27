@@ -2,7 +2,6 @@
 using System.Threading;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using Server;
-using SimpleChat.Client;
 
 namespace SimpleChatTest
 {
@@ -23,7 +22,7 @@ namespace SimpleChatTest
             Assert.AreEqual(true,HasChanged);
         }
 
-        private void Client_NewMessage(string str)
+        private void Client_NewMessage(string str, string sender)
         {
             HasChanged = true;
         }

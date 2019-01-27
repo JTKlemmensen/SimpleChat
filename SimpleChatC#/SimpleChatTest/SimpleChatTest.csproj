@@ -56,13 +56,17 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Client\Client.csproj">
+      <Project>{606b526c-46d2-4c56-aca3-c7bf77770c63}</Project>
+      <Name>Client</Name>
+    </ProjectReference>
     <ProjectReference Include="..\Server\Server.csproj">
       <Project>{af1c48b3-abc0-43ea-a261-9bc745baf67a}</Project>
       <Name>Server</Name>
     </ProjectReference>
-    <ProjectReference Include="..\SimpleChat\Client.csproj">
-      <Project>{606b526c-46d2-4c56-aca3-c7bf77770c63}</Project>
-      <Name>Client</Name>
+    <ProjectReference Include="..\Shared\Shared.csproj">
+      <Project>{ff004965-7d37-447f-ada9-a783377dfdb5}</Project>
+      <Name>Shared</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets" Condition="Exists('$(VSToolsPath)\TeamTest\Microsoft.TestTools.targets')" />
