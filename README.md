@@ -9,6 +9,7 @@ Program where people can send messages securely to each other.
 * Add basic login
 * Add server admin functionality (ban users, ban ips, whitelist, mute, max slots)
 * Implement users online, user connected and user disconnected
+* Make simple showcase video
 
 #### Showcase video
 Not made yet
