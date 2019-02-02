@@ -21,7 +21,7 @@ namespace Client
                 connection.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 this.Start(connection);
 
-                SetupConnection();   
+                SetupConnection();
         }
 
         public SimpleClient(int v)
@@ -43,6 +43,20 @@ namespace Client
                     if (message.Arguments.Count() == 2)
                         NewMessage?.Invoke(message.Arguments[0],message.Arguments[1]);
                     break;
+
+                case "USERS":
+                    TotalUsers?.Invoke(message.Arguments);
+                    break;
+
+                case "CONNECT":
+                    if (message.Arguments.Count() == 1)
+                        UserConnected?.Invoke(message.Arguments[0]);
+                    break;
+
+                case "DISCONNECT":
+                    if (message.Arguments.Count() == 1)
+                        UserDisconnected?.Invoke(message.Arguments[0]);
+                    break;
             }
         }
 
@@ -57,6 +71,9 @@ namespace Client
         public delegate void OnUserConnected(string user);
         public event OnUserConnected UserConnected;
 
+        public delegate void OnTotalUsers(IEnumerable<string> users);
+        public event OnTotalUsers TotalUsers;
+
         public delegate void OnUserDisconnected(string user);
         public event OnUserDisconnected UserDisconnected;
 
@@ -69,23 +86,12 @@ namespace Client
         {
             try
             {
-                Console.WriteLine("Establish Connection");
                 cipher = new SymmetricCipher();
-                Console.WriteLine("Establish Connection1");
-
                 string Key = asymCipher.Decrypt(message.Protocol);
-                Console.WriteLine("Establish Connection2");
-                Console.WriteLine(message.Arguments[0]);
-
                 string IV = asymCipher.Decrypt(message.Arguments[0]);
-
-                Console.WriteLine("KEY: " + Key);
-                Console.WriteLine("IV;; " + IV);
 
                 cipher.Key = Key;
                 cipher.IV = IV;
-
-                Console.WriteLine("Has established connection!");
             }
             catch (Exception)
             {
@@ -96,10 +102,13 @@ namespace Client
         private void SetupConnection()
         {
             asymCipher = new AsymmetricCipher();
-
-            Console.WriteLine("SETUP CONNECTION");
             Send(asymCipher.PublicKey(), false);
-            Console.WriteLine("SETUP CONNECTION2");
+        }
+
+        public override void Terminate()
+        {
+            Send("END",true);
+            base.Terminate();
         }
     }
 }

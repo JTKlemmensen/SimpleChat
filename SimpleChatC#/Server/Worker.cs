@@ -29,7 +29,11 @@ namespace Shared
             {
                 case "MESSAGE":
                     if (message.Arguments.Count == 1)
-                        server.Broadcast(message.Arguments[0], Username);
+                        server.SendMessage(message.Arguments[0], Username);
+                    break;
+
+                case "END":
+                    Terminate();
                     break;
 
                 default:
@@ -48,19 +52,25 @@ namespace Shared
             //Generate symmetric key + IV, save it and encrypt it with the given public assymetric key and send it to the client.   
             try
             {
-                Console.WriteLine("Establish Connection: " + message);
                 AsymmetricCipher asymmetric = new AsymmetricCipher();
-                asymmetric.LoadPublicKey(message.Protocol);
-                Console.WriteLine("Establish Connection2");
+                asymmetric.LoadPublicKey(message.Protocol);   
                 cipher = new SymmetricCipher();
-                Console.WriteLine("Establish Connection3");
+
                 Send(asymmetric.Encrypt(cipher.Key), false, asymmetric.Encrypt(cipher.IV));
-                Console.WriteLine("Establish Connection4");
+                server.Broadcast("CONNECT", this, Username); // Tell users that it connected
+                Send("USERS", true, server.ConnectedUsers().ToArray());
             }
             catch (Exception)
             {
                 //Terminate();
             }
+        }
+
+        public override void Terminate()
+        {
+            server.Broadcast("DISCONNECT", this, Username);
+            base.Terminate();
+            server.Remove(this);
         }
     }
 }

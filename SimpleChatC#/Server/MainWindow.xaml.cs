@@ -25,11 +25,37 @@ namespace Server
         {
             InitializeComponent();
             server = new SimpleServer(25565);
+            server.UserConnected += Client_UserConnected;
+            server.UserDisconnected += Client_UserDisconnected;
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             server.Terminate();
+        }
+
+        private void Client_UserDisconnected(string user)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => {
+                    ListBoxItem item = Users.Items.Cast<ListBoxItem>().FirstOrDefault(l => (string)l.Content == user);
+                    Users.Items.Remove(item);
+                })
+            );
+        }
+        
+        private void Client_UserConnected(string user)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => {
+                    Users.Items.Add(new ListBoxItem { Content = user });
+                })
+            );
+        }
+
+        private void OnStopServer(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }

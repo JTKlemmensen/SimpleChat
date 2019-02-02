@@ -1,5 +1,6 @@
 ﻿using Shared;
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
@@ -16,7 +17,12 @@ namespace Server
         private int port;
         private int idCounter;
         private bool stop;
+
         private List<Worker> workers;
+        private readonly object workersLock = new object();
+
+
+        public string[] Users {get; set;}
 
         public SimpleServer(int port)
         {
@@ -42,56 +48,88 @@ namespace Server
                         Socket connection = server.AcceptSocket();
 
                         Worker w = new Worker(this, connection, "Client "+idCounter++);
-                        workers.Add(w);
-                        Console.WriteLine("Client has connected!");
+                        lock (workersLock)
+                        {
+                            workers.Add(w);
+                            UserConnected?.Invoke(w.Username);
+                        }
                     }
 
-                Log("Server is closed!");
             }
             catch (Exception)
             {
-                Log("Exception");
             }
         }
 
         public void Terminate()
         {
-            stop = true;
+            lock (workersLock)
+            {
+                stop = true;
 
-            foreach (Worker w in workers)
-                w.Terminate();
+                for (int i=workers.Count-1;i>=0;i--)
+                    workers[i].Terminate();
+            }
         }
 
         /// <summary>
         /// Sends a message to all connected clients
         /// </summary>
         /// <param name="message">The message to sent to the users</param>
-        public void Broadcast(string message, string sender)
+        public void SendMessage(string message, string sender)
         {
-            foreach(Worker w in workers)
-                w.Send("MESSAGE",true,message, sender);
+            lock (workersLock)
+            {
+                foreach (Worker w in workers)
+                    w.Send("MESSAGE", true, message, sender);
+                NewMessage?.Invoke(message,sender);
+            }
         }
-        
+
         /// <summary>
         /// Sends a message to all connected clients except the given worker.
         /// </summary>
         /// <param name="message">The message to sent to the users</param>
         /// <param name="worker">The work that does not receive the message</param>
-        public void Broadcast(string message, Worker worker)
+        public void Broadcast(string protocol, params string[] parameters)
         {
-            foreach (Worker w in workers)
-                if(w != worker)
-                    w.Send(message);
+            Broadcast(protocol, null, parameters);
+        }
+
+        public void Broadcast(string protocol, Worker worker, params string[] parameters)
+        {
+            lock(workersLock)
+                foreach (Worker w in workers)
+                    if (worker == null || worker != w)
+                        w.Send(protocol, true, parameters);
         }
 
         public void Remove(Worker worker)
         {
-            workers.Remove(worker);
+            lock (workersLock)
+            {
+                workers.Remove(worker);
+                UserDisconnected?.Invoke(worker.Username);
+            }
         }
 
-        private void Log(string log)
+        public delegate void OnNewMessage(string message, string sender);
+        public event OnNewMessage NewMessage;
+
+        public delegate void OnUserConnected(string user);
+        public event OnUserConnected UserConnected;
+
+        public delegate void OnUserDisconnected(string user);
+        public event OnUserDisconnected UserDisconnected;
+
+        public List<string> ConnectedUsers()
         {
-            Console.WriteLine("[Server]: " + log);
+            lock (workersLock)
+            {
+                List<string> users = new List<string>();
+                workers.ForEach(w => users.Add(w.Username));
+                return users;
+            }
         }
     }
 }

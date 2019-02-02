@@ -31,16 +31,26 @@ namespace Shared
                 if (socket == null)
                     return;
 
-                string line = "";
                 NetworkStream stream = new NetworkStream(socket);
+                stream.ReadTimeout = 500;
                 using (StreamReader reader = new StreamReader(stream))
                 using (writer = new StreamWriter(stream))
+                {
                     while (!Stop)
-                        if ((line = reader.ReadLine()) != null)
-                            Command(GetNetworkMessage(line));
+                        try
+                        {
+                            string line = null;
+                            if ((line = reader.ReadLine()) != null)
+                                Command(GetNetworkMessage(line));
+                        }
+                        catch (IOException e)
+                        {
+                            // Read timeout
+                        }
+                }
+
             }catch(Exception)
             {
-                Terminate();
             }
         }
 
@@ -48,7 +58,6 @@ namespace Shared
         {
             if (writer == null || writer.BaseStream == null)
                 return;
-
             string line = "";
 
             if (encrypt && cipher!=null)
@@ -63,8 +72,13 @@ namespace Shared
                 foreach (string s in parameters)
                     line += "," + NetworkUtil.InsertEscape(s);
             }
-            writer.WriteLine(line);
-            writer.Flush();
+
+            try
+            {
+                writer.WriteLine(line);
+                writer.Flush();
+            }
+            catch (Exception) { }
         }
 
         /// <summary>
@@ -73,7 +87,7 @@ namespace Shared
         /// <param name="messageIn">The message that will be converted to an instance of NetworkMessage</param>
         /// <param name="cipher">The SymmetricCipher that will be used for decrypting the message</param>
         /// <returns></returns>
-        public NetworkMessage GetNetworkMessage(string messageIn)
+        private NetworkMessage GetNetworkMessage(string messageIn)
         {
             List<string> arguments = NetworkUtil.RemoveEscape(messageIn);
 
@@ -106,7 +120,7 @@ namespace Shared
             return null;
         }
 
-        public void Terminate()
+        public virtual void Terminate()
         {
             Stop = true;
         }

@@ -46,13 +46,9 @@
             </Grid.RowDefinitions>
 
             <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="1">
-                <ListBox>
-                    <ListBoxItem>ListBox Item #1</ListBoxItem>
-                    <ListBoxItem>ListBox Item #1</ListBoxItem>
-                    <ListBoxItem>ListBox Item #1</ListBoxItem>
-                </ListBox>
+                <ListBox x:Name="Users"/>
             </ScrollViewer>
-            <Button Content="Disconnect" Grid.Row="0" Height="50" Margin="0,0,0,10"></Button>
+            <Button Content="Disconnect" Grid.Row="0" Height="50" Margin="0,0,0,10" Click="OnDisconnect"></Button>
         </Grid>
     </Grid>
 </Window>

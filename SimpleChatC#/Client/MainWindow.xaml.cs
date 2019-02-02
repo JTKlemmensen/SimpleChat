@@ -29,13 +29,47 @@ namespace SimpleChat
             InitializeComponent();
             client = new SimpleClient("127.0.0.1",25565);
             client.NewMessage += OnNewMessage;
+            client.UserConnected += Client_UserConnected;
+            client.TotalUsers += Client_TotalUsers;
+            client.UserDisconnected += Client_UserDisconnected;
+        }
+
+        private void Client_UserDisconnected(string user)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => {
+                    MessagesArea.Text += "\n" + user + " has disconnected";
+                    ListBoxItem item = Users.Items.Cast<ListBoxItem>().FirstOrDefault(l => (string)l.Content == user);
+                    Users.Items.Remove(item);
+                })
+            );
+        }
+
+        private void Client_TotalUsers(IEnumerable<string> users)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => {
+                    foreach(string user in users)
+                        Users.Items.Add(new ListBoxItem { Content = user });
+                })
+            );
+        }
+
+        private void Client_UserConnected(string user)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => {
+                    MessagesArea.Text += "\n" + user + " has connected";
+                    Users.Items.Add(new ListBoxItem { Content = user });
+                })
+            );
         }
 
         private void OnNewMessage(string message, string sender)
         {
             Dispatcher.BeginInvoke(
                 new Action(() => {
-                    MessagesArea.Text += "\n["+sender+"]:"+message;
+                    MessagesArea.Text += "\n["+sender+"]: "+message;
                 })
             );
         }
@@ -43,11 +77,17 @@ namespace SimpleChat
         private void SendMessage(object sender, RoutedEventArgs e)
         {
             client.SendMessage(Message.Text);
+            Message.Text = "";
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
+            client.Terminate();
+        }
 
+        private void OnDisconnect(object sender, RoutedEventArgs e)
+        {
+            this.Close();
         }
     }
 }
