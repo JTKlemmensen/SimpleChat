@@ -23,15 +23,12 @@ namespace SimpleChat
     /// </summary>
     public partial class MainWindow : Window
     {
+        private bool IsConnected;
         private SimpleClient client;
         public MainWindow()
         {
             InitializeComponent();
-            client = new SimpleClient("127.0.0.1",25565);
-            client.NewMessage += OnNewMessage;
-            client.UserConnected += Client_UserConnected;
-            client.TotalUsers += Client_TotalUsers;
-            client.UserDisconnected += Client_UserDisconnected;
+            DisconnectedToServer();
         }
 
         private void Client_UserDisconnected(string user)
@@ -57,6 +54,7 @@ namespace SimpleChat
 
         private void Client_UserConnected(string user)
         {
+            Console.WriteLine("CONNECTED TO A SERER!");
             Dispatcher.BeginInvoke(
                 new Action(() => {
                     MessagesArea.Text += "\n" + user + " has connected";
@@ -82,12 +80,63 @@ namespace SimpleChat
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            client.Terminate();
+            if(client!=null)
+                client.Terminate();
         }
 
-        private void OnDisconnect(object sender, RoutedEventArgs e)
+        private void ConnectedToServer()
         {
-            this.Close();
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    IsConnected = true;
+                    ToggleConnection.Content = "Disconnect";
+                    ServerIP.IsEnabled = false;
+                    ServerPort.IsEnabled = false;
+                }
+            ));
+        }
+
+        private void DisconnectedToServer()
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    IsConnected = false;
+                    ToggleConnection.Content = "Connect";
+                    ServerIP.IsEnabled = true;
+                    ServerPort.IsEnabled = true;
+                    MessagesArea.Text = "";
+                    Users.Items.Clear();
+                }
+            ));
+        }
+
+        private void OnToggleConnection(object sender, RoutedEventArgs e)
+        {
+            if(IsConnected)
+            {
+                if (client != null)
+                {
+                    client.Terminate();
+                    client = null;
+                }
+            }
+            else
+            {
+                if (int.TryParse(ServerPort.Text, out int port))
+                {
+                    client = new SimpleClient(ServerIP.Text, port);
+                    client.NewMessage += OnNewMessage;
+                    client.UserConnected += Client_UserConnected;
+                    client.TotalUsers += Client_TotalUsers;
+                    client.UserDisconnected += Client_UserDisconnected;
+
+                    client.ConnectionConnect += ConnectedToServer;
+                    client.ConnectionDisconnect += DisconnectedToServer;
+                    IsConnected = true;
+                }
+            }
         }
     }
 }

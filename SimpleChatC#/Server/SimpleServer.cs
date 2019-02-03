@@ -39,8 +39,9 @@ namespace Server
             try
             {
                 TcpListener server = new TcpListener(IPAddress.Any, port);
-                
+
                 server.Start();
+                ServerStarted?.Invoke();
 
                 while (!stop)
                     if (server.Pending())
@@ -55,9 +56,15 @@ namespace Server
                         }
                     }
 
+                server.Server.Close(); // Release all resources
             }
-            catch (Exception)
+            catch (Exception e)
             {
+                Console.WriteLine(e.StackTrace);
+            }
+            finally
+            {
+                ServerClosed?.Invoke();
             }
         }
 
@@ -121,6 +128,13 @@ namespace Server
 
         public delegate void OnUserDisconnected(string user);
         public event OnUserDisconnected UserDisconnected;
+
+        public delegate void OnServerStarted();
+        public event OnServerStarted ServerStarted;
+
+        public delegate void OnServerClosed();
+        public event OnServerClosed ServerClosed;
+
 
         public List<string> ConnectedUsers()
         {

@@ -16,12 +16,15 @@ namespace Client
 
         public SimpleClient(string ip, int port)
         {
-            Socket connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-            
+            try
+            {
+                Socket connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
                 connection.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 this.Start(connection);
-
                 SetupConnection();
+            }
+            catch (Exception){}
         }
 
         public SimpleClient(int v)
@@ -46,6 +49,7 @@ namespace Client
 
                 case "USERS":
                     TotalUsers?.Invoke(message.Arguments);
+                    ConnectionConnect?.Invoke();
                     break;
 
                 case "CONNECT":
@@ -76,6 +80,9 @@ namespace Client
 
         public delegate void OnUserDisconnected(string user);
         public event OnUserDisconnected UserDisconnected;
+        
+        public delegate void OnConnectionConnect();
+        public event OnConnectionConnect ConnectionConnect;
 
         private bool HasEstablishedConnection()
         {

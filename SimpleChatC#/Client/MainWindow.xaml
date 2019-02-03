@@ -42,13 +42,17 @@
         <Grid Grid.Column="1" Margin="0,10,10,10">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
                 <RowDefinition/>
             </Grid.RowDefinitions>
 
-            <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="1">
+            <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="3">
                 <ListBox x:Name="Users"/>
             </ScrollViewer>
-            <Button Content="Disconnect" Grid.Row="0" Height="50" Margin="0,0,0,10" Click="OnDisconnect"></Button>
+            <Button Content="Disconnect" x:Name="ToggleConnection" Grid.Row="2" Height="50" Margin="0,0,0,10" Click="OnToggleConnection"></Button>
+            <TextBox IsEnabled="false" x:Name="ServerPort" ToolTip="Port" Grid.Row="1" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+            <TextBox x:Name="ServerIP" ToolTip="Ip" Grid.Row="0" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
         </Grid>
     </Grid>
 </Window>

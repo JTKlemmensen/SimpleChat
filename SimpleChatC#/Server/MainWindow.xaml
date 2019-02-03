@@ -9,12 +9,14 @@
     <Grid Grid.Column="1" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
             <RowDefinition/>
         </Grid.RowDefinitions>
 
-        <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="1" Height="300">
+        <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="2" Height="300">
             <ListBox x:Name="Users"/>
         </ScrollViewer>
-        <Button Content="Stop server" Grid.Row="0" Height="50" Margin="0,0,0,10" Click="OnStopServer"></Button>
+        <Button Content="Stop server" x:Name="ServerToggle" Grid.Row="1" Height="50" Margin="0,0,0,10" Click="OnTogleServer"></Button>
+        <TextBox x:Name="ServerPort" Grid.Row="0" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
     </Grid>
 </Window>

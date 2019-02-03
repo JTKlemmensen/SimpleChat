@@ -21,17 +21,40 @@ namespace Server
     public partial class MainWindow : Window
     {
         private SimpleServer server;
+        private bool ServerStarted = false;
         public MainWindow()
         {
             InitializeComponent();
-            server = new SimpleServer(25565);
-            server.UserConnected += Client_UserConnected;
-            server.UserDisconnected += Client_UserDisconnected;
+            Server_ServerClosed();
+        }
+
+        private void Server_ServerClosed()
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    ServerToggle.Content = "Start";
+                    ServerPort.IsEnabled = true;
+                }
+            ));
+            ServerStarted = false;
+        }
+
+        private void Server_ServerStarted()
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() =>
+                {
+                    ServerToggle.Content = "Close";
+                    ServerPort.IsEnabled = false;
+                }
+            ));
         }
 
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            server.Terminate();
+            if(server!=null)
+                server.Terminate();
         }
 
         private void Client_UserDisconnected(string user)
@@ -53,9 +76,27 @@ namespace Server
             );
         }
 
-        private void OnStopServer(object sender, RoutedEventArgs e)
+        private void OnTogleServer(object sender, RoutedEventArgs e)
         {
-            this.Close();
+            if(ServerStarted)
+            {
+                server.Terminate();
+                server = null;
+
+            }
+            else
+            {
+                if (int.TryParse(ServerPort.Text, out int port))
+                {
+                    server = new SimpleServer(port);
+                    server.UserConnected += Client_UserConnected;
+                    server.UserDisconnected += Client_UserDisconnected;
+                    server.ServerStarted += Server_ServerStarted;
+                    server.ServerClosed += Server_ServerClosed;
+
+                    ServerStarted = true;
+                }
+            }
         }
     }
 }

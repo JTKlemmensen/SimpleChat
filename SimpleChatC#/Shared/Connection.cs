@@ -43,7 +43,7 @@ namespace Shared
                             if ((line = reader.ReadLine()) != null)
                                 Command(GetNetworkMessage(line));
                         }
-                        catch (IOException e)
+                        catch (IOException)
                         {
                             // Read timeout
                         }
@@ -51,8 +51,17 @@ namespace Shared
 
             }catch(Exception)
             {
+                Console.WriteLine("FEJLER .d");
+            }
+            finally
+            {
+                Console.WriteLine("FEJLER ike");
+                ConnectionDisconnect?.Invoke();
             }
         }
+
+        public delegate void OnConnectionDisconnect();
+        public event OnConnectionDisconnect ConnectionDisconnect;
 
         public void Send(string protocol, bool encrypt = true, params string[] parameters)
         {
