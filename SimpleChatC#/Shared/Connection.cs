@@ -49,13 +49,9 @@ namespace Shared
                         }
                 }
 
-            }catch(Exception)
-            {
-                Console.WriteLine("FEJLER .d");
-            }
+            }catch(Exception){ }
             finally
             {
-                Console.WriteLine("FEJLER ike");
                 ConnectionDisconnect?.Invoke();
             }
         }
@@ -99,24 +95,15 @@ namespace Shared
         private NetworkMessage GetNetworkMessage(string messageIn)
         {
             List<string> arguments = NetworkUtil.RemoveEscape(messageIn);
-
-            Console.WriteLine("t1");
-
+            
             if (cipher != null)
-                //   arguments.ForEach(s => s = cipher.Decrypt(s));
                 for (int i = 0; i < arguments.Count(); i++)
-                {
-                    Console.WriteLine("A: " + arguments[i]);
                     arguments[i] = cipher.Decrypt(arguments[i]);
-                    Console.WriteLine("As: " + arguments[i]);
-                }
-            Console.WriteLine("t2");
 
             if (arguments.Count() > 0)
             {
                 string protocol = arguments[0];
                 arguments.RemoveAt(0);
-                Console.WriteLine("t3");
                 NetworkMessage message = new NetworkMessage()
                 {
                     Protocol = protocol,
