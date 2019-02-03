@@ -24,7 +24,7 @@ namespace Client
                 this.Start(connection);
                 SetupConnection();
             }
-            catch (Exception e){}
+            catch (Exception){}
         }
 
         public SimpleClient(int v)

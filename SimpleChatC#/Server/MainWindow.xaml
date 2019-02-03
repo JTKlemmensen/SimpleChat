@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Server"
         mc:Ignorable="d"
-        Title="C# Server" SizeToContent="WidthAndHeight" Closing="Window_Closing">
+        Title="SimpleChat Server" SizeToContent="WidthAndHeight" Closing="Window_Closing" ResizeMode="NoResize">
     <Grid Grid.Column="1" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>

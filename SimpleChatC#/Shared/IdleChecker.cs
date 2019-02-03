@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Shared;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -10,15 +11,15 @@ namespace Server
 {
     public class IdleChecker
     {
-        //private Worker worker;
+        private Connection connection;
         private Stopwatch stopWatch;
         private bool HasPinged;
-        private double IdleCooldown = 10;
+        private double IdleCooldown = 3;
         private double AllowedSecondsIdle = 5;
 
-        public IdleChecker()//Worker worker)
+        public IdleChecker(Connection connection)
         {
-            //this.worker = worker;
+            this.connection = connection;
             stopWatch = new Stopwatch();
             HasPinged = true;
 
@@ -27,7 +28,7 @@ namespace Server
 
         private void Run()
         {
-            //while(!worker.Stop)
+            while(!connection.Stop)
                 if(HasPinged)
                 {
                     if(!stopWatch.IsRunning)
@@ -40,6 +41,7 @@ namespace Server
                             HasPinged = false;
                             stopWatch.Reset();
                             stopWatch.Start();
+
                             //worker.SendMessage("PING");
                             Console.WriteLine("Server sending: PING");
                         }
@@ -50,10 +52,10 @@ namespace Server
                 else
                 {
                     double TimeLeft = AllowedSecondsIdle - stopWatch.Elapsed.TotalSeconds;
-                    /*if (TimeLeft<=0)
-                        worker.Terminate();
+                    if (TimeLeft<=0)
+                        connection.Terminate();
                     else
-                        Thread.Sleep((int)(TimeLeft * 1000));*/
+                        Thread.Sleep((int)(TimeLeft * 1000));
                 }
         }
 
@@ -61,7 +63,6 @@ namespace Server
         {
             HasPinged = true;
             Console.WriteLine("Server received: PONG");
-
         }
     }
 }

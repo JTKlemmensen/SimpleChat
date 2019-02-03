@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:SimpleChat"
         mc:Ignorable="d"
-        Title="MainWindow" SizeToContent="WidthAndHeight" Closing="Window_Closing">
+        Title="SimpleChat Client" SizeToContent="WidthAndHeight" Closing="Window_Closing" ResizeMode="NoResize">
     <Grid Width="Auto">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
