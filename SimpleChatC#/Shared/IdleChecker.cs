@@ -7,62 +7,57 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Server
+namespace Shared
 {
     public class IdleChecker
     {
         private Connection connection;
         private Stopwatch stopWatch;
+        private bool HasPonged;
         private bool HasPinged;
         private double IdleCooldown = 3;
-        private double AllowedSecondsIdle = 5;
+        private double AllowedSecondsIdle = 3;
 
         public IdleChecker(Connection connection)
         {
             this.connection = connection;
             stopWatch = new Stopwatch();
-            HasPinged = true;
+            Pong();
 
             Thread t = new Thread(Run);
+            t.Start();
         }
 
         private void Run()
         {
             while(!connection.Stop)
-                if(HasPinged)
+                if(HasPonged)
                 {
-                    if(!stopWatch.IsRunning)
-                        stopWatch.Start();
-                    else 
+                    if (stopWatch.Elapsed.TotalSeconds > IdleCooldown)
                     {
-                        double TimeLeft = IdleCooldown - stopWatch.Elapsed.TotalSeconds;
-                        if (TimeLeft <= 0)
-                        {
-                            HasPinged = false;
-                            stopWatch.Reset();
-                            stopWatch.Start();
-
-                            //worker.SendMessage("PING");
-                            Console.WriteLine("Server sending: PING");
-                        }
-                        else
-                            Thread.Sleep((int)(TimeLeft * 1000));
+                        HasPonged = false;
+                        connection.Send("PING", true);
+                        stopWatch.Reset();
+                        stopWatch.Start();
                     }
+                    else
+                        Thread.Sleep(1000);
+                    
                 }
                 else
                 {
-                    double TimeLeft = AllowedSecondsIdle - stopWatch.Elapsed.TotalSeconds;
-                    if (TimeLeft<=0)
+                    if (stopWatch.Elapsed.Seconds > AllowedSecondsIdle)
                         connection.Terminate();
                     else
-                        Thread.Sleep((int)(TimeLeft * 1000));
+                        Thread.Sleep(1000);
                 }
         }
 
         public void Pong()
         {
-            HasPinged = true;
-            Console.WriteLine("Server received: PONG");
+            HasPonged = true;
+            stopWatch.Reset();
+            stopWatch.Start();
         }
     }
 }

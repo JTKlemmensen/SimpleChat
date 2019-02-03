@@ -12,12 +12,14 @@ namespace Shared
     {
         public string Username { get; private set; }
         private SimpleServer server;
+        private IdleChecker idle;
 
         public Worker(SimpleServer server, Socket connection, string username)
         {
             this.server = server;
             this.Username = username;
             this.Start(connection);
+            idle = new IdleChecker(this);
         }
 
         protected override void Command(NetworkMessage message)
@@ -34,6 +36,15 @@ namespace Shared
 
                 case "END":
                     Terminate();
+                    break;
+
+                case "PING":
+                    Send("PONG", true);
+                    break;
+
+                case "PONG":
+                    if (idle != null)
+                        idle.Pong();
                     break;
 
                 default:

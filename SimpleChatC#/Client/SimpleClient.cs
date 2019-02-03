@@ -11,6 +11,7 @@ namespace Client
 {
     public class SimpleClient : Connection
     {
+        private IdleChecker idle;
         private AsymmetricCipher asymCipher;
         private int v;
 
@@ -23,6 +24,8 @@ namespace Client
                 connection.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 this.Start(connection);
                 SetupConnection();
+
+                idle = new IdleChecker(this);
             }
             catch (Exception){}
         }
@@ -60,6 +63,15 @@ namespace Client
                 case "DISCONNECT":
                     if (message.Arguments.Count() == 1)
                         UserDisconnected?.Invoke(message.Arguments[0]);
+                    break;
+
+                case "PONG":
+                    if (idle != null)
+                        idle.Pong();
+                    break;
+
+                case "PING":
+                    Send("PONG", true);
                     break;
             }
         }
