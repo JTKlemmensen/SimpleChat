@@ -74,7 +74,8 @@ namespace SimpleChat
 
         private void SendMessage(object sender, RoutedEventArgs e)
         {
-            client.SendMessage(Message.Text);
+            if(client!=null)
+                client.SendMessage(Message.Text);
             Message.Text = "";
         }
 
@@ -114,6 +115,7 @@ namespace SimpleChat
 
         private void OnToggleConnection(object sender, RoutedEventArgs e)
         {
+            Console.WriteLine((client == null) +" "+ IsConnected);
             if(IsConnected)
             {
                 if (client != null)
@@ -134,7 +136,6 @@ namespace SimpleChat
 
                     client.ConnectionConnect += ConnectedToServer;
                     client.ConnectionDisconnect += DisconnectedToServer;
-                    IsConnected = true;
                 }
             }
         }
