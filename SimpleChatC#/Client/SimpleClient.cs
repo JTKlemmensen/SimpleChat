@@ -73,6 +73,10 @@ namespace Client
                 case "PING":
                     Send("PONG", true);
                     break;
+
+                case "END":
+                    Terminate();
+                    break;
             }
         }
 

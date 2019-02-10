@@ -79,6 +79,7 @@ namespace Shared
 
         public override void Terminate()
         {
+            Send("END", true);
             server.Broadcast("DISCONNECT", this, Username);
             base.Terminate();
             server.Remove(this);
