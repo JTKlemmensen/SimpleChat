@@ -15,6 +15,10 @@ namespace Shared
 
         public static string InsertEscape(string text)
         {
+            if (string.IsNullOrEmpty(text))
+            {
+                return "";
+            }
             return text.Replace("/", "//").Replace(",","/,");
         }
 

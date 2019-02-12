@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:SimpleChat"
         mc:Ignorable="d"
         Title="SimpleChat Client" SizeToContent="WidthAndHeight" Closing="Window_Closing" ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
     <Grid Width="Auto">
         <Grid.ColumnDefinitions>
             <ColumnDefinition Width="Auto"/>
@@ -21,7 +24,7 @@
                 <RowDefinition Height="Auto"/>
             </Grid.RowDefinitions>
             <ScrollViewer VerticalScrollBarVisibility="Auto" Width="375" Height="300" Margin="0,0,0,10">
-                <TextBox x:Name="MessagesArea" TextWrapping="Wrap" AcceptsReturn="true"></TextBox>
+                <TextBox x:Name="MessagesArea" TextWrapping="Wrap" AcceptsReturn="true"  Text="{Binding ChatText}"></TextBox>
             </ScrollViewer>
             <Grid Grid.Row="1">
                 <Grid.ColumnDefinitions>
@@ -33,9 +36,10 @@
                     <RowDefinition Height="Auto"/>
                 </Grid.RowDefinitions>
 
-                <TextBox x:Name="Message" Grid.Row="0" Grid.RowSpan="2" Width="300" Height="90" TextWrapping="Wrap" AcceptsReturn="true" Grid.Column="0" />
-                <Button Click="SendMessage" Grid.Row="0" Grid.Column="1" Margin="10,0,0,5" Content="Send"></Button>
-                <Button Grid.Row="1" Grid.Column="1" Margin="10,5,0,0" Content="Clear"></Button>
+                <TextBox x:Name="Message" Grid.Row="0" Grid.RowSpan="2" Width="300" Height="90" TextWrapping="Wrap" AcceptsReturn="true" Grid.Column="0"
+                         Text="{Binding MessageToSend}"/>
+                <Button Command="{Binding SendMessage}" Grid.Row="0" Grid.Column="1" Margin="10,0,0,5" Content="Send"></Button>
+                <Button Command="{Binding ClearMessage}" Grid.Row="1" Grid.Column="1" Margin="10,5,0,0" Content="Clear"></Button>
             </Grid>
         </Grid>
 
@@ -48,11 +52,18 @@
             </Grid.RowDefinitions>
 
             <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="3">
-                <ListBox x:Name="Users"/>
+                <ListBox x:Name="Users" ItemsSource="{Binding Users}"/>
             </ScrollViewer>
-            <Button Content="Disconnect" x:Name="ToggleConnection" Grid.Row="2" Height="50" Margin="0,0,0,10" Click="OnToggleConnection"></Button>
-            <TextBox IsEnabled="false" x:Name="ServerPort" ToolTip="Port" Grid.Row="1" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
-            <TextBox x:Name="ServerIP" ToolTip="Ip" Grid.Row="0" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+            <Button Content="{Binding ToggleConnectionButtonText}" 
+                    x:Name="ToggleConnection" Grid.Row="2" Height="50" Margin="0,0,0,10"
+                    Command="{Binding ToggleConnection}"></Button>
+            <TextBox x:Name="ServerIP" 
+                     IsEnabled="{Binding CanChangeServerIP}"
+                     Text="{Binding ServerIP, UpdateSourceTrigger=PropertyChanged}"
+                     ToolTip="Ip" Grid.Row="0" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+            <TextBox IsEnabled="{Binding CanChangeServerPort}" Text="{Binding ServerPort, UpdateSourceTrigger=PropertyChanged}"
+                     x:Name="ServerPort" 
+                     ToolTip="Port" Grid.Row="1" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
         </Grid>
     </Grid>
 </Window>
