@@ -93,10 +93,22 @@ namespace Server
                     server.UserDisconnected += Client_UserDisconnected;
                     server.ServerStarted += Server_ServerStarted;
                     server.ServerClosed += Server_ServerClosed;
+                    server.UsernameChanged += Server_UsernameChanged;
 
                     ServerStarted = true;
                 }
             }
+        }
+
+        private void Server_UsernameChanged(string oldUsername, string changedUsername)
+        {
+            Dispatcher.BeginInvoke(
+                new Action(() => {
+                    ListBoxItem item = Users.Items.Cast<ListBoxItem>().FirstOrDefault(l => (string)l.Content == oldUsername);
+                    Users.Items.Remove(item);
+                    Users.Items.Add(new ListBoxItem { Content = changedUsername });
+                })
+            );
         }
     }
 }

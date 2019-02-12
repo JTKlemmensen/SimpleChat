@@ -59,9 +59,10 @@ namespace Shared
                         }
                         else
                         {
-                            var previousUsername = Username;
+                            var oldUsername = Username;
                             Username = usernameToUse;
-                            server.Broadcast(MessageProtocols.UsernameChanged, previousUsername, Username);
+                            server.UsernameWasChanged(oldUsername, Username);
+                            server.Broadcast(MessageProtocols.UsernameChanged, oldUsername, Username);
                         }
                     }
                     break;

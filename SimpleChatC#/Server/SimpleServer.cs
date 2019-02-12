@@ -86,6 +86,11 @@ namespace Server
             return workerWithUsername != null;
         }
 
+        public void UsernameWasChanged(string oldUsername, string changedUsername)
+        {
+            UsernameChanged?.Invoke(oldUsername, changedUsername);
+        }
+
         /// <summary>
         /// Sends a message to all connected clients
         /// </summary>
@@ -142,6 +147,8 @@ namespace Server
         public delegate void OnServerClosed();
         public event OnServerClosed ServerClosed;
 
+        public delegate void OnUsernameChanged(string oldUsername, string changedUsername);
+        public event OnUsernameChanged UsernameChanged;
 
         public List<string> ConnectedUsers()
         {
