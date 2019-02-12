@@ -16,7 +16,7 @@ namespace Client
         private AsymmetricCipher asymCipher;
         private int v;
 
-        public SimpleClient(string ip, int port)
+        public SimpleClient(string ip, int port, string username = "")
         {
             try
             {
@@ -24,7 +24,7 @@ namespace Client
 
                 connection.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 this.Start(connection);
-                SetupConnection();
+                SetupConnection(username);
 
                 idle = new IdleChecker(this);
             }
@@ -123,7 +123,7 @@ namespace Client
             }
         }
 
-        private void SetupConnection()
+        private void SetupConnection(string username = "")
         {
             asymCipher = new AsymmetricCipher();
             Send(asymCipher.PublicKey(), false);
@@ -131,7 +131,7 @@ namespace Client
 
         public override void Terminate()
         {
-            Send("END",true);
+            Send(MessageProtocols.End, true);
             base.Terminate();
         }
     }

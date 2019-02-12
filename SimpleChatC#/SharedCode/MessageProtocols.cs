@@ -13,5 +13,6 @@ namespace SharedCode
         public const string Pong = "PONG";
         public const string Ping = "PING";
         public const string End = "END";
+        public const string Username = "USERNAME";
     }
 }

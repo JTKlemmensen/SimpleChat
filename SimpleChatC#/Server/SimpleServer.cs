@@ -1,4 +1,5 @@
 ﻿using Shared;
+using SharedCode;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -88,7 +89,7 @@ namespace Server
             lock (workersLock)
             {
                 foreach (Worker w in workers)
-                    w.Send("MESSAGE", true, message, sender);
+                    w.Send(MessageProtocols.Message, true, message, sender);
                 NewMessage?.Invoke(message,sender);
             }
         }
