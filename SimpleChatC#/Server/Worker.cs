@@ -21,7 +21,6 @@ namespace Shared
             this.Username = username;
             this.Start(connection);
             idle = new IdleChecker(this);
-           // Send(MessageProtocols.SetUsername, true, username);
         }
 
         protected override void Command(NetworkMessage message)
@@ -88,6 +87,7 @@ namespace Shared
                 cipher = new SymmetricCipher();
 
                 Send(asymmetric.Encrypt(cipher.Key), false, asymmetric.Encrypt(cipher.IV));
+                Send(MessageProtocols.SetUsername, true, Username);
                 server.Broadcast(MessageProtocols.Connect, this, Username); // Tell users that it connected
                 Send(MessageProtocols.Users, true, server.ConnectedUsers().ToArray());
             }
