@@ -1,4 +1,5 @@
 ﻿using Shared;
+using SharedCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -45,36 +46,36 @@ namespace Client
 
             switch(message.Protocol)
             {
-                case "MESSAGE":
+                case MessageProtocols.Message:
                     if (message.Arguments.Count() == 2)
                         NewMessage?.Invoke(message.Arguments[0],message.Arguments[1]);
                     break;
 
-                case "USERS":
+                case MessageProtocols.Users:
                     TotalUsers?.Invoke(message.Arguments);
                     ConnectionConnect?.Invoke();
                     break;
 
-                case "CONNECT":
+                case MessageProtocols.Connect:
                     if (message.Arguments.Count() == 1)
                         UserConnected?.Invoke(message.Arguments[0]);
                     break;
 
-                case "DISCONNECT":
+                case MessageProtocols.Disconnect:
                     if (message.Arguments.Count() == 1)
                         UserDisconnected?.Invoke(message.Arguments[0]);
                     break;
 
-                case "PONG":
+                case MessageProtocols.Pong:
                     if (idle != null)
                         idle.Pong();
                     break;
 
-                case "PING":
-                    Send("PONG", true);
+                case MessageProtocols.Ping:
+                    Send(MessageProtocols.Pong, true);
                     break;
 
-                case "END":
+                case MessageProtocols.End:
                     Terminate();
                     break;
             }

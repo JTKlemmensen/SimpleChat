@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)ChangeNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)IdleChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)MessageProtocols.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)NetworkUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)RelayCommand.cs" />
