@@ -41,6 +41,11 @@ namespace SimpleChat
             Users = new ObservableCollection<string>();
         }
 
+        public void Terminate()
+        {
+            _client?.Terminate();
+        }
+
         public bool IsConnected
         {
             get { return _isConnected; }
@@ -131,10 +136,45 @@ namespace SimpleChat
                     _client.TotalUsers += ClientTotalUsers;
                     _client.UserDisconnected += ClientUserDisconnected;
 
+                    _client.SetUsername += ClientSetUsername;
+                    _client.UsernameTaken += ClientUsernameTaken;
+                    _client.UsernameChanged += ClientUsernameChanged;
+
                     _client.ConnectionConnect += ClientConnectedToServer;
                     _client.ConnectionDisconnect += ClientDisconnectedToServer;
                 }
             }
+        }
+
+        private void ClientUsernameTaken()
+        {
+            // TODO:
+        }
+
+        private void ClientSetUsername(string username)
+        {
+            Username = username;
+        }
+
+        private void ClientUsernameChanged(string oldUsername, string changedUsername)
+        {
+            RunOnUIThread(() =>
+            {
+                Users.Remove(oldUsername);
+                Users.Add(changedUsername);
+            });
+            ChatText += "\n[" + oldUsername + " changed their username to " + changedUsername + "]";
+            SortUserList();
+        }
+
+        private void SortUserList()
+        {
+            RunOnUIThread(() =>
+            {
+                var list = Users.ToList();
+                list.Sort();
+                Users = new ObservableCollection<string>(list);
+            });
         }
 
         private void ClientConnectedToServer()
@@ -143,6 +183,10 @@ namespace SimpleChat
             ToggleConnectionButtonText = "Disconnect";
             CanChangeServerIP = false;
             CanChangeServerPort = false;
+            if (!string.IsNullOrWhiteSpace(ChatText))
+            {
+                ChatText += "\n";
+            }
             ChatText += "[Connected to server]";
         }
 
@@ -196,8 +240,7 @@ namespace SimpleChat
 
         private void SendMessageToServer()
         {
-            if (_client != null)
-                _client.SendMessage(MessageToSend);
+            _client?.SendMessage(MessageToSend);
             ClearMessageCurrentlyBeingTyped();
         }
 
@@ -209,6 +252,16 @@ namespace SimpleChat
         private void ClearMessageCurrentlyBeingTyped()
         {
             MessageToSend = "";
+        }
+
+        public ICommand SetUsername
+        {
+            get { return new RelayCommand(SendChangedUsername); }
+        }
+
+        private void SendChangedUsername()
+        {
+            _client?.Send(MessageProtocols.SetUsername, true, Username);
         }
     }
 }

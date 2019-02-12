@@ -21,6 +21,7 @@ namespace Shared
             this.Username = username;
             this.Start(connection);
             idle = new IdleChecker(this);
+           // Send(MessageProtocols.SetUsername, true, username);
         }
 
         protected override void Command(NetworkMessage message)
@@ -46,6 +47,24 @@ namespace Shared
                 case MessageProtocols.Pong:
                     if (idle != null)
                         idle.Pong();
+                    break;
+
+                case MessageProtocols.SetUsername:
+                    if (message.Arguments.Count == 1)
+                    {
+                        
+                        var usernameToUse = message.Arguments[0];
+                        if (server.IsUsernameTaken(usernameToUse))
+                        {
+                            Send(MessageProtocols.UsernameTaken);
+                        }
+                        else
+                        {
+                            var previousUsername = Username;
+                            Username = usernameToUse;
+                            server.Broadcast(MessageProtocols.UsernameChanged, previousUsername, Username);
+                        }
+                    }
                     break;
 
                 default:

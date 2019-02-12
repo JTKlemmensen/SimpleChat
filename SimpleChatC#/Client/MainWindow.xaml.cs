@@ -30,8 +30,10 @@ namespace SimpleChat
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //if(client!=null)
-            //    client.Terminate();
+            if (DataContext is MainWindowViewModel)
+            {
+                (DataContext as MainWindowViewModel).Terminate();
+            }
         }
     }
 }

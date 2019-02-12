@@ -13,6 +13,8 @@ namespace SharedCode
         public const string Pong = "PONG";
         public const string Ping = "PING";
         public const string End = "END";
-        public const string Username = "USERNAME";
+        public const string SetUsername = "SET_USERNAME";
+        public const string UsernameTaken = "USERNAME_TAKEN";
+        public const string UsernameChanged = "USERNAME_CHANGED";
     }
 }

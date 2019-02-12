@@ -78,12 +78,31 @@ namespace Client
                 case MessageProtocols.End:
                     Terminate();
                     break;
+
+                case MessageProtocols.SetUsername:
+                    if (message.Arguments.Count == 1)
+                    {
+                        SetUsername?.Invoke(message.Arguments[0]);
+                    }
+                    break;
+
+                case MessageProtocols.UsernameTaken:
+                    UsernameTaken?.Invoke();
+                    break;
+
+                case MessageProtocols.UsernameChanged:
+                    if (message.Arguments.Count == 2)
+                    {
+                        UsernameChanged?.Invoke(message.Arguments[0], message.Arguments[1]);
+                    }
+                    break;
+
             }
         }
 
         public void SendMessage(string message)
         {
-            Send("MESSAGE", true, message);
+            Send(MessageProtocols.Message, true, message);
         }
 
         public delegate void OnNewMessage(string message, string sender);
@@ -100,6 +119,15 @@ namespace Client
         
         public delegate void OnConnectionConnect();
         public event OnConnectionConnect ConnectionConnect;
+
+        public delegate void OnSetUsername(string username);
+        public event OnSetUsername SetUsername;
+
+        public delegate void OnUsernameTaken();
+        public event OnUsernameTaken UsernameTaken;
+
+        public delegate void OnUsernameChanged(string oldUsername, string changedUsername);
+        public event OnUsernameChanged UsernameChanged;
 
         private bool HasEstablishedConnection()
         {

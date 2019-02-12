@@ -80,6 +80,12 @@ namespace Server
             }
         }
 
+        public bool IsUsernameTaken(string username)
+        {
+            var workerWithUsername = workers.Where(x => x.Username == username).FirstOrDefault();
+            return workerWithUsername != null;
+        }
+
         /// <summary>
         /// Sends a message to all connected clients
         /// </summary>
