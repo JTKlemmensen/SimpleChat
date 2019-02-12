@@ -171,9 +171,7 @@ namespace SimpleChat
         {
             RunOnUIThread(() =>
             {
-                var list = Users.ToList();
-                list.Sort();
-                Users = new ObservableCollection<string>(list);
+                Users = new ObservableCollection<string>(Users.OrderBy(i => i));
             });
         }
 
