@@ -33,12 +33,22 @@ namespace SimpleChat
 
         public MainWindowViewModel()
         {
+            // upgrading settings: https://stackoverflow.com/a/534335
+            if (Properties.Settings.Default.UpgradeRequired)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
             IsConnected = false;
             ToggleConnectionButtonText = "Connect";
             CanChangeServerIP = true;
             CanChangeServerPort = true;
             ChatText = "";
             Users = new ObservableCollection<string>();
+
+            ServerIP = Properties.Settings.Default.LastUsedIP.ToString();
+            ServerPort = Properties.Settings.Default.LastUsedPort.ToString();
         }
 
         public void Terminate()
@@ -127,6 +137,9 @@ namespace SimpleChat
             {
                 if (int.TryParse(ServerPort, out int port))
                 {
+                    Properties.Settings.Default.LastUsedIP = ServerIP;
+                    Properties.Settings.Default.LastUsedPort = port;
+                    Properties.Settings.Default.Save();
                     _client = new SimpleClient(ServerIP, port);
                     _client.NewMessage += ClientNewMessage;
                     _client.UserConnected += ClientUserConnected;

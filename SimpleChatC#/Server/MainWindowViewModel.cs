@@ -25,12 +25,20 @@ namespace Server
 
         public MainWindowViewModel()
         {
+            // upgrading settings: https://stackoverflow.com/a/534335
+            if (Properties.Settings.Default.UpgradeRequired)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
             _isServerStarted = false;
             ToggleServerButtonTitle = "Start";
             IsServerPortFieldEnabled = true;
             Users = new ObservableCollection<string>();
             _selectedUserIndex = -1;
             _isUserSelected = false;
+            ServerPort = Properties.Settings.Default.LastUsedPort.ToString();
         }
 
         public void Terminate()
@@ -90,6 +98,8 @@ namespace Server
             {
                 if (int.TryParse(ServerPort, out int port))
                 {
+                    Properties.Settings.Default.LastUsedPort = port;
+                    Properties.Settings.Default.Save();
                     _server = new SimpleServer(port);
                     _server.UserConnected += ServerUserConnected;
                     _server.UserDisconnected += ClientUserDisconnected;
