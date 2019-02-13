@@ -62,6 +62,7 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="MainWindowViewModel.cs" />
     <Compile Include="Worker.cs" />
     <Compile Include="SimpleServer.cs" />
   </ItemGroup>

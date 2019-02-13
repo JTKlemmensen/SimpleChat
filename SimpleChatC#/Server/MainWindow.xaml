@@ -6,6 +6,9 @@
         xmlns:local="clr-namespace:Server"
         mc:Ignorable="d"
         Title="SimpleChat Server" SizeToContent="WidthAndHeight" Closing="Window_Closing" ResizeMode="NoResize">
+    <Window.DataContext>
+        <local:MainWindowViewModel/>
+    </Window.DataContext>
     <Grid Grid.Column="1" Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -14,9 +17,10 @@
         </Grid.RowDefinitions>
 
         <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="2" Height="300">
-            <ListBox x:Name="Users"/>
+            <ListBox x:Name="Users" ItemsSource="{Binding Users}"/>
         </ScrollViewer>
-        <Button Content="Stop server" x:Name="ServerToggle" Grid.Row="1" Height="50" Margin="0,0,0,10" Click="OnTogleServer"></Button>
-        <TextBox x:Name="ServerPort" Grid.Row="0" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+        <Button Content="{Binding ToggleServerButtonTitle}" x:Name="ServerToggle" Grid.Row="1" Height="50" Margin="0,0,0,10" Command="{Binding ToggleServer}"></Button>
+        <TextBox x:Name="ServerPort" Grid.Row="0" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"
+                 Text="{Binding ServerPort}"></TextBox>
     </Grid>
 </Window>
