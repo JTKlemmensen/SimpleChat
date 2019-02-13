@@ -150,6 +150,7 @@ namespace SimpleChat
             if (username == Username)
             {
                 Terminate();
+                ChatText += "\n[You were kicked from the server]";
             }
         }
 
@@ -205,7 +206,7 @@ namespace SimpleChat
             ToggleConnectionButtonText = "Connect";
             CanChangeServerIP = true;
             CanChangeServerPort = true;
-            ChatText = "";
+            ChatText += "\n[Disconnected from server]";
         }
 
         private void ClientUserConnected(string user)
