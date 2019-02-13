@@ -16,5 +16,6 @@ namespace SharedCode
         public const string SetUsername = "SET_USERNAME";
         public const string UsernameTaken = "USERNAME_TAKEN";
         public const string UsernameChanged = "USERNAME_CHANGED";
+        public const string KickUser = "KICK_USER";
     }
 }

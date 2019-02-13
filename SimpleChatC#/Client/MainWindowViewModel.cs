@@ -44,6 +44,7 @@ namespace SimpleChat
         public void Terminate()
         {
             _client?.Terminate();
+            _client = null;
         }
 
         public bool IsConnected
@@ -120,11 +121,7 @@ namespace SimpleChat
         {
             if (IsConnected)
             {
-                if (_client != null)
-                {
-                    _client.Terminate();
-                    _client = null;
-                }
+                Terminate();
             }
             else
             {
@@ -142,7 +139,17 @@ namespace SimpleChat
 
                     _client.ConnectionConnect += ClientConnectedToServer;
                     _client.ConnectionDisconnect += ClientDisconnectedToServer;
+
+                    _client.UserKicked += ClientUserKicked;
                 }
+            }
+        }
+
+        private void ClientUserKicked(string username)
+        {
+            if (username == Username)
+            {
+                Terminate();
             }
         }
 

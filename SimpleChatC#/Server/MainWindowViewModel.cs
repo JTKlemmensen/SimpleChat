@@ -20,12 +20,17 @@ namespace Server
         private bool _isServerPortFieldEnabled;
         private ObservableCollection<string> _users;
 
+        private int _selectedUserIndex;
+        private bool _isUserSelected;
+
         public MainWindowViewModel()
         {
             _isServerStarted = false;
             ToggleServerButtonTitle = "Start";
             IsServerPortFieldEnabled = true;
             Users = new ObservableCollection<string>();
+            _selectedUserIndex = -1;
+            _isUserSelected = false;
         }
 
         public void Terminate()
@@ -55,6 +60,18 @@ namespace Server
         {
             get { return _serverPort; }
             set { _serverPort = value; NotifyPropertyChanged(); }
+        }
+
+        public int SelectedUserIndex
+        {
+            get { return _selectedUserIndex; }
+            set { _selectedUserIndex = value; NotifyPropertyChanged(); IsUserSelected = value >= 0; }
+        }
+
+        public bool IsUserSelected
+        {
+            get { return _isUserSelected; }
+            set { _isUserSelected = value; NotifyPropertyChanged(); }
         }
 
         public ICommand ToggleServer
@@ -135,6 +152,17 @@ namespace Server
             {
                 Users = new ObservableCollection<string>(Users.OrderBy(i => i));
             });
+        }
+
+        public ICommand KickUser
+        {
+            get { return new RelayCommand(KickSelectedUser); }
+        }
+
+        private void KickSelectedUser()
+        {
+            _server.Broadcast(MessageProtocols.KickUser, _users[SelectedUserIndex]);
+            _server.Broadcast(MessageProtocols.Disconnect, _users[SelectedUserIndex]);
         }
     }
 }
