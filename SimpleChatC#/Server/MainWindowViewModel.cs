@@ -13,7 +13,6 @@ namespace Server
     class MainWindowViewModel : ChangeNotifier
     {
         private SimpleServer _server;
-        private bool _isServerStarted;
 
         private string _serverPort;
         private string _toggleServerButtonTitle;
@@ -32,7 +31,6 @@ namespace Server
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
             }
-            _isServerStarted = false;
             ToggleServerButtonTitle = "Start";
             IsServerPortFieldEnabled = true;
             Users = new ObservableCollection<string>();
@@ -44,6 +42,7 @@ namespace Server
         public void Terminate()
         {
             _server?.Terminate();
+            _server = null;
         }
 
         public string ToggleServerButtonTitle
@@ -82,6 +81,8 @@ namespace Server
             set { _isUserSelected = value; NotifyPropertyChanged(); }
         }
 
+        public bool IsServerRunning =>  _server != null;
+
         public ICommand ToggleServer
         {
             get { return new RelayCommand(ToggleServerOffOn); }
@@ -89,7 +90,7 @@ namespace Server
 
         private void ToggleServerOffOn()
         {
-            if (_isServerStarted)
+            if (IsServerRunning)
             {
                 _server.Terminate();
                 _server = null;
@@ -105,9 +106,7 @@ namespace Server
                     _server.UserDisconnected += ClientUserDisconnected;
                     _server.ServerStarted += ServerStarted;
                     _server.ServerClosed += ServerClosed;
-                    _server.UsernameChanged += ServerUsernameChanged;
-
-                    _isServerStarted = true;
+                    _server.UsernameChanged += ServerUsernameChanged;                    
                 }
             }
         }
@@ -131,6 +130,7 @@ namespace Server
         {
             ToggleServerButtonTitle = "Start Server";
             IsServerPortFieldEnabled = true;
+            _server = null;
         }
 
         private void ServerStarted()
