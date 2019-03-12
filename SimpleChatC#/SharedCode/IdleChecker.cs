@@ -1,4 +1,5 @@
 ﻿using Shared;
+using SharedCode;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -36,7 +37,7 @@ namespace Shared
                     if (stopWatch.Elapsed.TotalSeconds > IdleCooldown)
                     {
                         HasPonged = false;
-                        connection.Send("PING", true);
+                        connection.Send(MessageProtocols.Ping, true);
                         stopWatch.Reset();
                         stopWatch.Start();
                     }

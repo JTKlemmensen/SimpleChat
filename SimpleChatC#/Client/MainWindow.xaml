@@ -48,15 +48,10 @@
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
                 <RowDefinition Height="Auto"/>
-                <RowDefinition/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
-            <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="3">
-                <ListBox x:Name="Users" ItemsSource="{Binding Users}"/>
-            </ScrollViewer>
-            <Button Content="{Binding ToggleConnectionButtonText}" 
-                    x:Name="ToggleConnection" Grid.Row="2" Height="50" Margin="0,0,0,10"
-                    Command="{Binding ToggleConnection}"></Button>
             <TextBox x:Name="ServerIP" 
                      IsEnabled="{Binding CanChangeServerIP}"
                      Text="{Binding ServerIP, UpdateSourceTrigger=PropertyChanged}"
@@ -64,6 +59,17 @@
             <TextBox IsEnabled="{Binding CanChangeServerPort}" Text="{Binding ServerPort, UpdateSourceTrigger=PropertyChanged}"
                      x:Name="ServerPort" 
                      ToolTip="Port" Grid.Row="1" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+            <Button Content="{Binding ToggleConnectionButtonText}" 
+                    x:Name="ToggleConnection" Grid.Row="2" Height="50" Margin="0,0,0,10"
+                    Command="{Binding ToggleConnection}"></Button>
+            <TextBox Text="{Binding Username, UpdateSourceTrigger=PropertyChanged}" ToolTip="Username"
+                     Grid.Row="3" Margin="0,0,0,10" Height="25" VerticalContentAlignment="Center" HorizontalContentAlignment="Center"></TextBox>
+            <Button Content="Set Username" 
+                    Grid.Row="4" Height="50" Margin="0,0,0,10"
+                    Command="{Binding SetUsername}"></Button>
+            <ScrollViewer Width="150" VerticalScrollBarVisibility="Auto" Grid.Row="5">
+                <ListBox x:Name="Users" ItemsSource="{Binding Users}"/>
+            </ScrollViewer>
         </Grid>
     </Grid>
 </Window>
