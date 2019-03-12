@@ -1,4 +1,5 @@
 ﻿using Server;
+using SharedCode;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -29,20 +30,20 @@ namespace Shared
 
             switch(message.Protocol)
             {
-                case "MESSAGE":
+                case MessageProtocols.Message:
                     if (message.Arguments.Count == 1)
                         server.SendMessage(message.Arguments[0], Username);
                     break;
 
-                case "END":
+                case MessageProtocols.End:
                     Terminate();
                     break;
 
-                case "PING":
-                    Send("PONG", true);
+                case MessageProtocols.Ping:
+                    Send(MessageProtocols.Pong, true);
                     break;
 
-                case "PONG":
+                case MessageProtocols.Pong:
                     if (idle != null)
                         idle.Pong();
                     break;
@@ -68,8 +69,8 @@ namespace Shared
                 cipher = new SymmetricCipher();
 
                 Send(asymmetric.Encrypt(cipher.Key), false, asymmetric.Encrypt(cipher.IV));
-                server.Broadcast("CONNECT", this, Username); // Tell users that it connected
-                Send("USERS", true, server.ConnectedUsers().ToArray());
+                server.Broadcast(MessageProtocols.Connect, this, Username); // Tell users that it connected
+                Send(MessageProtocols.Users, true, server.ConnectedUsers().ToArray());
             }
             catch (Exception)
             {
@@ -79,8 +80,8 @@ namespace Shared
 
         public override void Terminate()
         {
-            Send("END", true);
-            server.Broadcast("DISCONNECT", this, Username);
+            Send(MessageProtocols.End, true);
+            server.Broadcast(MessageProtocols.Disconnect, this, Username);
             base.Terminate();
             server.Remove(this);
         }
