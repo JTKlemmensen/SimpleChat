@@ -11,8 +11,6 @@ namespace Shared
 {
     public class NetworkUtil
     {
-        private static RSACryptoServiceProvider rsa;
-
         public static string InsertEscape(string text)
         {
             if (string.IsNullOrEmpty(text))

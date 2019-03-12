@@ -15,7 +15,6 @@ namespace Shared
         private Connection connection;
         private Stopwatch stopWatch;
         private bool HasPonged;
-        private bool HasPinged;
         private double IdleCooldown = 3;
         private double AllowedSecondsIdle = 3;
 
