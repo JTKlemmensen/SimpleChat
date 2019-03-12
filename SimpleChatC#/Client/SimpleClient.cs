@@ -24,7 +24,7 @@ namespace Client
 
                 connection.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
                 this.Start(connection);
-                SetupConnection(username);
+                SetupConnection();
 
                 idle = new IdleChecker(this);
             }
@@ -64,6 +64,13 @@ namespace Client
                 case MessageProtocols.Disconnect:
                     if (message.Arguments.Count() == 1)
                         UserDisconnected?.Invoke(message.Arguments[0]);
+                    break;
+
+                case MessageProtocols.KickUser:
+                    if (message.Arguments.Count() == 1)
+                    {
+                        UserKicked?.Invoke(message.Arguments[0]);
+                    }
                     break;
 
                 case MessageProtocols.Pong:
@@ -129,6 +136,9 @@ namespace Client
         public delegate void OnUsernameChanged(string oldUsername, string changedUsername);
         public event OnUsernameChanged UsernameChanged;
 
+        public delegate void OnUserKicked(string username);
+        public event OnUserKicked UserKicked;
+
         private bool HasEstablishedConnection()
         {
             return cipher != null;
@@ -151,7 +161,7 @@ namespace Client
             }
         }
 
-        private void SetupConnection(string username = "")
+        private void SetupConnection()
         {
             asymCipher = new AsymmetricCipher();
             Send(asymCipher.PublicKey(), false);

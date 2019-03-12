@@ -20,12 +20,25 @@ namespace Server
         private bool _isServerPortFieldEnabled;
         private ObservableCollection<string> _users;
 
+        private int _selectedUserIndex;
+        private bool _isUserSelected;
+
         public MainWindowViewModel()
         {
+            // upgrading settings: https://stackoverflow.com/a/534335
+            if (Properties.Settings.Default.UpgradeRequired)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
             _isServerStarted = false;
             ToggleServerButtonTitle = "Start";
             IsServerPortFieldEnabled = true;
             Users = new ObservableCollection<string>();
+            _selectedUserIndex = -1;
+            _isUserSelected = false;
+            ServerPort = Properties.Settings.Default.LastUsedPort.ToString();
         }
 
         public void Terminate()
@@ -57,6 +70,18 @@ namespace Server
             set { _serverPort = value; NotifyPropertyChanged(); }
         }
 
+        public int SelectedUserIndex
+        {
+            get { return _selectedUserIndex; }
+            set { _selectedUserIndex = value; NotifyPropertyChanged(); IsUserSelected = value >= 0; }
+        }
+
+        public bool IsUserSelected
+        {
+            get { return _isUserSelected; }
+            set { _isUserSelected = value; NotifyPropertyChanged(); }
+        }
+
         public ICommand ToggleServer
         {
             get { return new RelayCommand(ToggleServerOffOn); }
@@ -73,6 +98,8 @@ namespace Server
             {
                 if (int.TryParse(ServerPort, out int port))
                 {
+                    Properties.Settings.Default.LastUsedPort = port;
+                    Properties.Settings.Default.Save();
                     _server = new SimpleServer(port);
                     _server.UserConnected += ServerUserConnected;
                     _server.UserDisconnected += ClientUserDisconnected;
@@ -135,6 +162,17 @@ namespace Server
             {
                 Users = new ObservableCollection<string>(Users.OrderBy(i => i));
             });
+        }
+
+        public ICommand KickUser
+        {
+            get { return new RelayCommand(KickSelectedUser); }
+        }
+
+        private void KickSelectedUser()
+        {
+            _server.Broadcast(MessageProtocols.KickUser, _users[SelectedUserIndex]);
+            _server.Broadcast(MessageProtocols.Disconnect, _users[SelectedUserIndex]);
         }
     }
 }

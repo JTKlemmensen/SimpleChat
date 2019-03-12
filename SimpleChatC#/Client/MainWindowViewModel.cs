@@ -33,17 +33,28 @@ namespace SimpleChat
 
         public MainWindowViewModel()
         {
+            // upgrading settings: https://stackoverflow.com/a/534335
+            if (Properties.Settings.Default.UpgradeRequired)
+            {
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
+            }
             IsConnected = false;
             ToggleConnectionButtonText = "Connect";
             CanChangeServerIP = true;
             CanChangeServerPort = true;
             ChatText = "";
             Users = new ObservableCollection<string>();
+
+            ServerIP = Properties.Settings.Default.LastUsedIP.ToString();
+            ServerPort = Properties.Settings.Default.LastUsedPort.ToString();
         }
 
         public void Terminate()
         {
             _client?.Terminate();
+            _client = null;
         }
 
         public bool IsConnected
@@ -120,16 +131,15 @@ namespace SimpleChat
         {
             if (IsConnected)
             {
-                if (_client != null)
-                {
-                    _client.Terminate();
-                    _client = null;
-                }
+                Terminate();
             }
             else
             {
                 if (int.TryParse(ServerPort, out int port))
                 {
+                    Properties.Settings.Default.LastUsedIP = ServerIP;
+                    Properties.Settings.Default.LastUsedPort = port;
+                    Properties.Settings.Default.Save();
                     _client = new SimpleClient(ServerIP, port);
                     _client.NewMessage += ClientNewMessage;
                     _client.UserConnected += ClientUserConnected;
@@ -142,7 +152,18 @@ namespace SimpleChat
 
                     _client.ConnectionConnect += ClientConnectedToServer;
                     _client.ConnectionDisconnect += ClientDisconnectedToServer;
+
+                    _client.UserKicked += ClientUserKicked;
                 }
+            }
+        }
+
+        private void ClientUserKicked(string username)
+        {
+            if (username == Username)
+            {
+                Terminate();
+                ChatText += "\n[You were kicked from the server]";
             }
         }
 
@@ -198,7 +219,7 @@ namespace SimpleChat
             ToggleConnectionButtonText = "Connect";
             CanChangeServerIP = true;
             CanChangeServerPort = true;
-            ChatText = "";
+            ChatText += "\n[Disconnected from server]";
         }
 
         private void ClientUserConnected(string user)
