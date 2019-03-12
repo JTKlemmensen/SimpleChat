@@ -101,11 +101,6 @@
       <Generator>MSBuild:Compile</Generator>
     </Page>
   </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\Shared\Shared.csproj">
-      <Project>{ff004965-7d37-447f-ada9-a783377dfdb5}</Project>
-      <Name>Shared</Name>
-    </ProjectReference>
-  </ItemGroup>
+  <Import Project="..\SharedCode\SharedCode.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
