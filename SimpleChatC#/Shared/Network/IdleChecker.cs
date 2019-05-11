@@ -1,5 +1,4 @@
 ﻿using Shared;
-using SharedCode;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -8,7 +7,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Shared
+namespace Shared.Network
 {
     public class IdleChecker
     {

@@ -4,7 +4,7 @@ using System.ComponentModel;
 using System.Runtime.CompilerServices;
 using System.Text;
 
-namespace SharedCode
+namespace Shared.Gui
 {
     class ChangeNotifier : INotifyPropertyChanged
     {

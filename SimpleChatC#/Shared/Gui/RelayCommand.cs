@@ -4,7 +4,7 @@ using System.Diagnostics;
 using System.Text;
 using System.Windows.Input;
 
-namespace SharedCode
+namespace Shared.Gui
 {
     // https://gist.github.com/schuster-rainer/2648922 with some modifications
     public class RelayCommand<T> : ICommand

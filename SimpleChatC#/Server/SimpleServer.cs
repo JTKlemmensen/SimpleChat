@@ -1,5 +1,5 @@
 ﻿using Shared;
-using SharedCode;
+using Shared.Network;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;

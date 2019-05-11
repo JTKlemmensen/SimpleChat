@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Shared
+namespace Shared.Ciphers
 {
     public class SymmetricCipher
     {
@@ -27,9 +27,6 @@ namespace Shared
         {
             cipher = new RijndaelManaged();
             cipher.KeySize = 128;
-            Console.WriteLine("Key: " + Key);
-            Console.WriteLine("IV: " + IV);
-
         }
 
         public string Encrypt(string message)
@@ -80,7 +77,8 @@ namespace Shared
                         return decryptedMessage;
                     }
                 }
-            }catch(Exception)
+            }
+            catch (Exception)
             {
                 return null;
             }    

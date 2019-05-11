@@ -1,4 +1,4 @@
-﻿using Shared;
+﻿using Shared.Ciphers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Shared
+namespace Shared.Network
 {
     public abstract class Connection
     {

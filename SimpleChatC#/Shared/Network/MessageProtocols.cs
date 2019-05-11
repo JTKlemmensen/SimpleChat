@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace SharedCode
+namespace Shared.Network
 {
     public class MessageProtocols
     {

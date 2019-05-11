@@ -1,5 +1,6 @@
 ﻿using Client;
-using SharedCode;
+using Shared.Gui;
+using Shared.Network;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

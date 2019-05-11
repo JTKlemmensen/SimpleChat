@@ -9,14 +9,19 @@
     <Import_RootNamespace>Shared</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)AsymmetricCipher.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ChangeNotifier.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Connection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)IdleChecker.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)MessageProtocols.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)NetworkMessage.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)NetworkUtil.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)RelayCommand.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)SymmetricCipher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ciphers\AsymmetricCipher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gui\ChangeNotifier.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Connection.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\IdleChecker.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\MessageProtocols.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\NetworkMessage.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\NetworkUtil.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Gui\RelayCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Ciphers\SymmetricCipher.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Gui\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Network\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Ciphers\" />
   </ItemGroup>
 </Project>

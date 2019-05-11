@@ -1,5 +1,6 @@
 ﻿using Server;
-using SharedCode;
+using Shared.Ciphers;
+using Shared.Network;
 using System;
 using System.Collections.Generic;
 using System.Linq;
