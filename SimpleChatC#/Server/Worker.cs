@@ -24,7 +24,7 @@ namespace Shared
             idle = new IdleChecker(this);
         }
 
-        protected override void Command(NetworkMessage message)
+        protected override void OnCommand(NetworkMessage message)
         {
             if (!HasEstablishedConnection())
                 EstablishConnection(message);

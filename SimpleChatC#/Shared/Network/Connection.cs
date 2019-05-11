@@ -41,7 +41,7 @@ namespace Shared.Network
                         {
                             string line = null;
                             if ((line = reader.ReadLine()) != null)
-                                Command(GetNetworkMessage(line));
+                                OnCommand(GetNetworkMessage(line));
                         }
                         catch (IOException)
                         {
@@ -121,6 +121,6 @@ namespace Shared.Network
             Stop = true;
         }
 
-        protected abstract void Command(NetworkMessage message);
+        protected abstract void OnCommand(NetworkMessage message);
     }
 }
