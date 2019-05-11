@@ -7,10 +7,11 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Server", "Server\Server.csp
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Client", "Client\Client.csproj", "{606B526C-46D2-4C56-ACA3-C7BF77770C63}"
 EndProject
-Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "Shared\Shared.shproj", "{9E386D6F-4F05-475E-9E40-2BFA3DC0C882}"
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Shared", "Shared\Shared.shproj", "{0D8AD369-C2BA-41CE-ABC8-184705C34F78}"
 EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Shared\Shared.projitems*{0d8ad369-c2ba-41ce-abc8-184705c34f78}*SharedItemsImports = 13
 		Shared\Shared.projitems*{606b526c-46d2-4c56-aca3-c7bf77770c63}*SharedItemsImports = 4
 		Shared\Shared.projitems*{af1c48b3-abc0-43ea-a261-9bc745baf67a}*SharedItemsImports = 4
 	EndGlobalSection
