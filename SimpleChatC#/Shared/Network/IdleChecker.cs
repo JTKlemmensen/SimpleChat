@@ -14,8 +14,8 @@ namespace Shared.Network
         private Connection connection;
         private Stopwatch stopWatch;
         private bool HasPonged;
-        private double IdleCooldown = 3;
-        private double AllowedSecondsIdle = 3;
+        private double IdleCheckerCooldown = 3;
+        private double AllowedSecondsUserIdle = 3;
 
         public IdleChecker(Connection connection)
         {
@@ -27,36 +27,46 @@ namespace Shared.Network
             t.Start();
         }
 
-        private void Run()
-        {
-            while(!connection.Stop)
-                if(HasPonged)
-                {
-                    if (stopWatch.Elapsed.TotalSeconds > IdleCooldown)
-                    {
-                        HasPonged = false;
-                        connection.Send(MessageProtocols.Ping, true);
-                        stopWatch.Reset();
-                        stopWatch.Start();
-                    }
-                    else
-                        Thread.Sleep(1000);
-                    
-                }
-                else
-                {
-                    if (stopWatch.Elapsed.Seconds > AllowedSecondsIdle)
-                        connection.Terminate();
-                    else
-                        Thread.Sleep(1000);
-                }
-        }
-
         public void Pong()
         {
             HasPonged = true;
             stopWatch.Reset();
             stopWatch.Start();
+        }
+
+        private void Run()
+        {
+            while(!connection.Stop)
+                if(HasPonged)
+                {
+                    if (!IsIdleCheckerOnCooldown())
+                        CheckIfUserIsIdle();
+                    else
+                        Thread.Sleep(1000);
+                }
+                else
+                    if (IsUserIdle())
+                        connection.Terminate();
+                    else
+                        Thread.Sleep(1000);
+        }
+
+        private bool IsIdleCheckerOnCooldown()
+        {
+            return stopWatch.Elapsed.TotalSeconds <= IdleCheckerCooldown;
+        }
+
+        private void CheckIfUserIsIdle()
+        {
+            HasPonged = false;
+            connection.Send(MessageProtocols.Ping, true);
+            stopWatch.Reset();
+            stopWatch.Start();
+        }
+
+        private bool IsUserIdle()
+        {
+            return stopWatch.Elapsed.TotalSeconds > AllowedSecondsUserIdle;
         }
     }
 }
