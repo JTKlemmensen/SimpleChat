@@ -1,4 +1,5 @@
 ﻿using Client;
+using Client.Network;
 using Shared.Gui;
 using Shared.Network;
 using System;
@@ -12,7 +13,7 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace SimpleChat
+namespace SimpleChat.Gui
 {
     class MainWindowViewModel : ChangeNotifier
     {
