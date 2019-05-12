@@ -63,9 +63,11 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
+    <Compile Include="Entities\User.cs" />
     <Compile Include="Gui\MainWindowViewModel.cs" />
     <Compile Include="Network\Worker.cs" />
     <Compile Include="Network\SimpleServer.cs" />
+    <Compile Include="Repositories\IUserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\MainWindow.xaml.cs">
