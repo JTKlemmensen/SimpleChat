@@ -1,5 +1,6 @@
 ﻿using Shared;
 using Shared.Network;
+using Shared.Network.Entities;
 using System;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
@@ -95,13 +96,14 @@ namespace Server
         /// Sends a message to all connected clients
         /// </summary>
         /// <param name="message">The message to sent to the users</param>
-        public void SendMessage(string message, string sender)
+        public void SendMessage(string content, string sender)
         {
             lock (workersLock)
             {
+                Message message = new Message { Content = content, Sender = sender };
                 foreach (Worker w in workers)
-                    w.Send(MessageProtocols.Message, true, message, sender);
-                NewMessage?.Invoke(message,sender);
+                    w.Send(MessageProtocols.Message, message);
+                NewMessage?.Invoke(content,sender);
             }
         }
 
@@ -110,17 +112,17 @@ namespace Server
         /// </summary>
         /// <param name="message">The message to sent to the users</param>
         /// <param name="worker">The work that does not receive the message</param>
-        public void Broadcast(string protocol, params string[] parameters)
+        public void Broadcast(string protocol, object obj)
         {
-            Broadcast(protocol, null, parameters);
+            Broadcast(protocol, null, obj);
         }
 
-        public void Broadcast(string protocol, Worker worker, params string[] parameters)
+        public void Broadcast(string protocol, Worker worker, object obj)
         {
             lock(workersLock)
                 foreach (Worker w in workers)
                     if (worker == null || worker != w)
-                        w.Send(protocol, true, parameters);
+                        w.Send(protocol, obj);
         }
 
         public void Remove(Worker worker)

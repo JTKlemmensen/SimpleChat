@@ -1,5 +1,6 @@
 ﻿using Shared.Ciphers;
 using Shared.Network;
+using Shared.Network.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -47,32 +48,36 @@ namespace Client.Network
             switch(message.Protocol)
             {
                 case MessageProtocols.Message:
-                    if (message.Arguments.Count() == 2)
-                        NewMessage?.Invoke(message.Arguments[0],message.Arguments[1]);
+                    if (message.TryGetObject<Message>(out Message m))
+                        NewMessage?.Invoke(m.Content, m.Sender);
                     break;
 
                 case MessageProtocols.Users:
-                    TotalUsers?.Invoke(message.Arguments);
-                    ConnectionConnect?.Invoke();
+                    if (message.TryGetObject<IEnumerable<string>>(out IEnumerable<string> users))
+                    {
+                        TotalUsers?.Invoke(users);
+                        ConnectionConnect?.Invoke();
+                    }
                     break;
 
                 case MessageProtocols.Connect:
-                    if (message.Arguments.Count() == 1)
-                        UserConnected?.Invoke(message.Arguments[0]);
+                    if (message.TryGetObject<string>(out string connectedUser))
+                        UserConnected?.Invoke(connectedUser);
                     break;
 
                 case MessageProtocols.Disconnect:
-                    if (message.Arguments.Count() == 1)
-                        UserDisconnected?.Invoke(message.Arguments[0]);
+                    if (message.TryGetObject<string>(out string disconnectedUser))
+                        UserDisconnected?.Invoke(disconnectedUser);
                     break;
 
+                    /*
                 case MessageProtocols.KickUser:
                     if (message.Arguments.Count() == 1)
                     {
                         UserKicked?.Invoke(message.Arguments[0]);
                     }
                     break;
-
+                    */
                 case MessageProtocols.Pong:
                     if (idle != null)
                         idle.Pong();
@@ -86,6 +91,7 @@ namespace Client.Network
                     Terminate();
                     break;
 
+                    /*
                 case MessageProtocols.SetUsername:
                     if (message.Arguments.Count == 1)
                     {
@@ -103,13 +109,13 @@ namespace Client.Network
                         UsernameChanged?.Invoke(message.Arguments[0], message.Arguments[1]);
                     }
                     break;
-
+                    */
             }
         }
 
         public void SendMessage(string message)
         {
-            Send(MessageProtocols.Message, true, message);
+            Send(MessageProtocols.Message, message);
         }
 
         public delegate void OnNewMessage(string message, string sender);
@@ -148,12 +154,17 @@ namespace Client.Network
         {
             try
             {
-                cipher = new SymmetricCipher();
-                string Key = asymCipher.Decrypt(message.Protocol);
-                string IV = asymCipher.Decrypt(message.Arguments[0]);
+                if (message.TryGetObject<string>(out string iv))
+                {
+                    cipher = new SymmetricCipher();
+                    string Key = asymCipher.Decrypt(message.Protocol);
+                    string IV = asymCipher.Decrypt(iv);
 
-                cipher.Key = Key;
-                cipher.IV = IV;
+                    cipher.Key = Key;
+                    cipher.IV = IV;
+                }
+                else
+                    throw new Exception();
             }
             catch (Exception)
             {
@@ -164,7 +175,9 @@ namespace Client.Network
         private void SetupConnection()
         {
             asymCipher = new AsymmetricCipher();
-            Send(asymCipher.PublicKey(), false);
+            Console.WriteLine("CLIENT sender: ");
+            Console.WriteLine(asymCipher.PublicKey());
+            Send(asymCipher.PublicKey(),"");
         }
 
         public override void Terminate()

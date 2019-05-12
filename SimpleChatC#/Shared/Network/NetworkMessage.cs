@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -9,6 +10,21 @@ namespace Shared.Network
     public class NetworkMessage
     {
         public string Protocol { get; set; }
-        public List<string> Arguments { get; set; }
+        public string Message { get; set; }
+
+        public bool TryGetObject<T>(out T obj)
+        {
+            try
+            {
+                obj = JsonConvert.DeserializeObject<T>(Message);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.StackTrace);
+                obj = default(T);
+                return false;
+            }
+        }
     }
 }

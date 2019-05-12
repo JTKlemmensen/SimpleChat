@@ -1,4 +1,5 @@
-﻿using Shared.Ciphers;
+﻿using Newtonsoft.Json;
+using Shared.Ciphers;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -59,24 +60,20 @@ namespace Shared.Network
         public delegate void OnConnectionDisconnect();
         public event OnConnectionDisconnect ConnectionDisconnect;
 
-        public void Send(string protocol, bool encrypt = true, params string[] parameters)
+        public void Send(string protocol, object obj = null, bool encrypt = true)
         {
             if (writer == null || writer.BaseStream == null)
                 return;
+
             string line = "";
 
-            if (encrypt && cipher!=null)
-            {
-                line = NetworkUtil.InsertEscape(cipher.Encrypt(protocol));
-                foreach (string s in parameters)
-                    line += "," + NetworkUtil.InsertEscape(cipher.Encrypt(s));
-            }
+            if (obj != null)
+                line = JsonConvert.SerializeObject(obj);
+
+            if (encrypt && cipher != null)
+                line = NetworkUtil.InsertEscape(cipher.Encrypt(protocol)) + "," + NetworkUtil.InsertEscape(cipher.Encrypt(line));            
             else
-            {
-                line = NetworkUtil.InsertEscape(protocol);
-                foreach (string s in parameters)
-                    line += "," + NetworkUtil.InsertEscape(s);
-            }
+                line = NetworkUtil.InsertEscape(protocol) + "," + NetworkUtil.InsertEscape(line);
 
             try
             {
@@ -95,22 +92,28 @@ namespace Shared.Network
         private NetworkMessage GetNetworkMessage(string messageIn)
         {
             List<string> arguments = NetworkUtil.RemoveEscape(messageIn);
-            
+            Console.WriteLine();
+
             if (cipher != null)
                 for (int i = 0; i < arguments.Count(); i++)
+                {
                     arguments[i] = cipher.Decrypt(arguments[i]);
+                    Console.Write(arguments[i] + " ");
+                    Console.WriteLine();
+                }
 
-            if (arguments.Count() > 0)
+            if (arguments.Count() >= 2)
             {
                 string protocol = arguments[0];
-                arguments.RemoveAt(0);
-                NetworkMessage message = new NetworkMessage()
+                string message = arguments[1];
+                
+                NetworkMessage networkMessage = new NetworkMessage()
                 {
                     Protocol = protocol,
-                    Arguments = arguments
+                    Message = message
                 };
 
-                return message;
+                return networkMessage;
             }
 
             return null;

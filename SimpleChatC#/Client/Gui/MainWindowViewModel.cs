@@ -227,6 +227,10 @@ namespace SimpleChat.Gui
         private void ClientUserConnected(string user)
         {
             ChatText += "\n" + user + " has connected";
+            RunOnUIThread(() =>
+            {
+                Users.Add(user);
+            });
         }
 
         private void ClientUserDisconnected(string user)
@@ -282,7 +286,7 @@ namespace SimpleChat.Gui
 
         private void SendChangedUsername()
         {
-            _client?.Send(MessageProtocols.SetUsername, true, Username);
+            _client?.Send(MessageProtocols.SetUsername, Username);
         }
     }
 }
