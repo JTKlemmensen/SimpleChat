@@ -13,11 +13,17 @@ namespace Shared.Network
 {
     public abstract class Connection
     {
+        private Dictionary<string, Action<NetworkMessage>> commands;
         private Socket socket;
         private StreamWriter writer;
         protected SymmetricCipher cipher;
         public bool Stop { get; private set; }
         
+        public Connection()
+        {
+            commands = new Dictionary<string, Action<NetworkMessage>>();
+        }
+
         public void Start(Socket socket)
         {
             this.socket = socket;
@@ -124,6 +130,34 @@ namespace Shared.Network
             Stop = true;
         }
 
-        protected abstract void OnCommand(NetworkMessage message);
+        protected void AddCommand(string protocol, Action<NetworkMessage> func)
+        {
+            commands[protocol] = func;
+        }
+
+        protected void RemoveCommand(string protocol)
+        {
+            if(commands.ContainsKey(protocol))
+                commands.Remove(protocol);
+        }
+
+        protected void OnCommand(NetworkMessage message)
+        {
+            if (!HasEstablishedConnection())
+            {
+                EstablishConnection(message);
+                return;
+            }
+
+            if (commands.ContainsKey(message.Protocol))
+                commands[message.Protocol].Invoke(message);
+        }
+
+        protected bool HasEstablishedConnection()
+        {
+            return cipher != null;
+        }
+
+        protected abstract void EstablishConnection(NetworkMessage message);
     }
 }

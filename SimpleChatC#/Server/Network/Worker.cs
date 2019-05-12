@@ -17,70 +17,66 @@ namespace Shared
         private SimpleServer server;
         private IdleChecker idle;
 
-        public Worker(SimpleServer server, Socket connection, string username)
+        public Worker(SimpleServer server, Socket connection, string username) : base()
         {
+            this.AddCommand(MessageProtocols.Message, MessageCommand);
+            this.AddCommand(MessageProtocols.End, EndCommand);
+            this.AddCommand(MessageProtocols.Ping, PingCommand);
+            this.AddCommand(MessageProtocols.Pong, PongCommand);
+            
+            //this.AddCommand(MessageProtocols.SetUsername, SetUsernameCommand);
+
             this.server = server;
             this.Username = username;
             this.Start(connection);
             idle = new IdleChecker(this);
         }
-
-        protected override void OnCommand(NetworkMessage message)
+        #region incoming commands from client
+        private void MessageCommand(NetworkMessage message)
         {
-            if (!HasEstablishedConnection())
-                EstablishConnection(message);
+            if (message.TryGetObject<string>(out string m))
+                server.SendMessage(m, Username);
+        }
 
-            switch(message.Protocol)
+        private void EndCommand(NetworkMessage message)
+        {
+            Terminate();
+        }
+
+        private void PingCommand(NetworkMessage message)
+        {
+            Send(MessageProtocols.Pong, true);
+        }
+
+        private void PongCommand(NetworkMessage message)
+        {
+            if (idle != null)
+                idle.Pong();
+        }
+        /*
+        private void SetUsernameCommand(NetworkMessage message)
+        {
+            if (message.TryGetObject<string>(out string username))
             {
-                case MessageProtocols.Message:
-                    if (message.TryGetObject<string>(out string m))
-                        server.SendMessage(m, Username);
-                    break;
 
-                case MessageProtocols.End:
-                    Terminate();
-                    break;
-
-                case MessageProtocols.Ping:
-                    Send(MessageProtocols.Pong, true);
-                    break;
-
-                case MessageProtocols.Pong:
-                    if (idle != null)
-                        idle.Pong();
-                    break;
-                    /*
-                case MessageProtocols.SetUsername:
-                    if (message.TryGetObject<string>(out string username))
-                    {
-                        
-                        var usernameToUse = username;
-                        if (server.IsUsernameTaken(usernameToUse))
-                        {
-                            Send(MessageProtocols.UsernameTaken);
-                        }
-                        else
-                        {
-                            var oldUsername = Username;
-                            Username = usernameToUse;
-                            server.UsernameWasChanged(oldUsername, Username);
-                            server.Broadcast(MessageProtocols.UsernameChanged, oldUsername, Username);
-                        }
-                    }
-                    break;
-                    */
-                default:
-                    Console.WriteLine(message.Protocol);
-                    break;
+                var usernameToUse = username;
+                if (server.IsUsernameTaken(usernameToUse))
+                {
+                    Send(MessageProtocols.UsernameTaken);
+                }
+                else
+                {
+                    var oldUsername = Username;
+                    Username = usernameToUse;
+                    server.UsernameWasChanged(oldUsername, Username);
+                    server.Broadcast(MessageProtocols.UsernameChanged, oldUsername, Username);
+                }
             }
         }
-
-        private bool HasEstablishedConnection()
-        {
-            return cipher != null;
-        }
-
-        private void EstablishConnection(NetworkMessage message)
+        */
+        #endregion
+       
+        protected override void EstablishConnection(NetworkMessage message)
         {
             //Generate symmetric key + IV, save it and encrypt it with the given public assymetric key and send it to the client.   
             try

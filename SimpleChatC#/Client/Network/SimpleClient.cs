@@ -15,12 +15,22 @@ namespace Client.Network
     {
         private IdleChecker idle;
         private AsymmetricCipher asymCipher;
-        private int v;
 
-        public SimpleClient(string ip, int port, string username = "")
+        public SimpleClient(string ip, int port, string username = "") : base()
         {
             try
             {
+                this.AddCommand(MessageProtocols.Connect, ConnectCommand);
+                this.AddCommand(MessageProtocols.Disconnect, DisconnectCommand);
+                this.AddCommand(MessageProtocols.Message, MessageCommand);
+                this.AddCommand(MessageProtocols.Users, UsersCommand);
+                this.AddCommand(MessageProtocols.Ping, PingCommand);
+                this.AddCommand(MessageProtocols.Pong, PongCommand);
+
+                //this.AddCommand(MessageProtocols.SetUsername, SetUsernameCommand);
+                //this.AddCommand(MessageProtocols.UsernameTaken, UsernameTakenCommand);
+                //this.AddCommand(MessageProtocols.UsernameChanged, UsernameChangedCommand);
+
                 Socket connection = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
                 connection.Connect(new IPEndPoint(IPAddress.Parse(ip), port));
@@ -32,125 +42,108 @@ namespace Client.Network
             catch (Exception){}
         }
 
-        public SimpleClient(int v)
+        #region incoming commands from server
+        private void ConnectCommand(NetworkMessage message)
         {
-            this.v = v;
+            if (message.TryGetObject<string>(out string connectedUser))
+                UserConnected?.Invoke(connectedUser);
         }
 
-        protected override void OnCommand(NetworkMessage message)
+        private void DisconnectCommand(NetworkMessage message)
         {
-            if (!HasEstablishedConnection())
+            if (message.TryGetObject<string>(out string disconnectedUser))
+                UserDisconnected?.Invoke(disconnectedUser);
+        }
+
+        private void MessageCommand(NetworkMessage message)
+        {
+            if (message.TryGetObject<Message>(out Message m))
+                NewMessage?.Invoke(m.Content, m.Sender);
+        }
+
+        private void UsersCommand(NetworkMessage message)
+        {
+            if (message.TryGetObject<IEnumerable<string>>(out IEnumerable<string> users))
             {
-                EstablishConnection(message);
-                return;
-            }
-
-            switch(message.Protocol)
-            {
-                case MessageProtocols.Message:
-                    if (message.TryGetObject<Message>(out Message m))
-                        NewMessage?.Invoke(m.Content, m.Sender);
-                    break;
-
-                case MessageProtocols.Users:
-                    if (message.TryGetObject<IEnumerable<string>>(out IEnumerable<string> users))
-                    {
-                        TotalUsers?.Invoke(users);
-                        ConnectionConnect?.Invoke();
-                    }
-                    break;
-
-                case MessageProtocols.Connect:
-                    if (message.TryGetObject<string>(out string connectedUser))
-                        UserConnected?.Invoke(connectedUser);
-                    break;
-
-                case MessageProtocols.Disconnect:
-                    if (message.TryGetObject<string>(out string disconnectedUser))
-                        UserDisconnected?.Invoke(disconnectedUser);
-                    break;
-
-                    /*
-                case MessageProtocols.KickUser:
-                    if (message.Arguments.Count() == 1)
-                    {
-                        UserKicked?.Invoke(message.Arguments[0]);
-                    }
-                    break;
-                    */
-                case MessageProtocols.Pong:
-                    if (idle != null)
-                        idle.Pong();
-                    break;
-
-                case MessageProtocols.Ping:
-                    Send(MessageProtocols.Pong, true);
-                    break;
-
-                case MessageProtocols.End:
-                    Terminate();
-                    break;
-
-                    /*
-                case MessageProtocols.SetUsername:
-                    if (message.Arguments.Count == 1)
-                    {
-                        SetUsername?.Invoke(message.Arguments[0]);
-                    }
-                    break;
-
-                case MessageProtocols.UsernameTaken:
-                    UsernameTaken?.Invoke();
-                    break;
-
-                case MessageProtocols.UsernameChanged:
-                    if (message.Arguments.Count == 2)
-                    {
-                        UsernameChanged?.Invoke(message.Arguments[0], message.Arguments[1]);
-                    }
-                    break;
-                    */
+                TotalUsers?.Invoke(users);
+                ConnectionConnect?.Invoke();
             }
         }
+
+        private void PingCommand(NetworkMessage message)
+        {
+            Send(MessageProtocols.Pong, true);
+        }
+
+        private void PongCommand(NetworkMessage message)
+        {
+            if (idle != null)
+                idle.Pong();
+        }
+
+        private void EndCommand(NetworkMessage message)
+        {
+            Terminate();
+        }
+
+        /*
+        private void SetUsernameCommand(NetworkMessage message)
+        {
+            if (message.Arguments.Count == 1)
+            {
+                SetUsername?.Invoke(message.Arguments[0]);
+            }
+        }
+
+        private void UsernameTakenCommand(NetworkMessage message)
+        {
+            UsernameTaken?.Invoke();
+        }
+
+        private void UsernameChangedCommand(NetworkMessage message)
+        {
+            if (message.Arguments.Count == 2)
+            {
+                UsernameChanged?.Invoke(message.Arguments[0], message.Arguments[1]);
+            }
+        }
+        */
+        #endregion
+        #region outgoing events
+        public delegate void NewMessageEventHandler(string message, string sender);
+        public event NewMessageEventHandler NewMessage;
+
+        public delegate void UserConnectedEventHandler(string user);
+        public event UserConnectedEventHandler UserConnected;
+
+        public delegate void TotalUsersEventHandler(IEnumerable<string> users);
+        public event TotalUsersEventHandler TotalUsers;
+
+        public delegate void UserDisconnectedEventHandler(string user);
+        public event UserDisconnectedEventHandler UserDisconnected;
+        
+        public delegate void ConnectionConnectEventHandler();
+        public event ConnectionConnectEventHandler ConnectionConnect;
+
+        public delegate void SetUsernameEventHandler(string username);
+        public event SetUsernameEventHandler SetUsername;
+
+        public delegate void UsernameTakenEventHandler();
+        public event UsernameTakenEventHandler UsernameTaken;
+
+        public delegate void UsernameChangedEventHandler(string oldUsername, string changedUsername);
+        public event UsernameChangedEventHandler UsernameChanged;
+
+        public delegate void UserKickedEventHandler(string username);
+        public event UserKickedEventHandler UserKicked;
+        #endregion
 
         public void SendMessage(string message)
         {
             Send(MessageProtocols.Message, message);
         }
 
-        public delegate void OnNewMessage(string message, string sender);
-        public event OnNewMessage NewMessage;
-
-        public delegate void OnUserConnected(string user);
-        public event OnUserConnected UserConnected;
-
-        public delegate void OnTotalUsers(IEnumerable<string> users);
-        public event OnTotalUsers TotalUsers;
-
-        public delegate void OnUserDisconnected(string user);
-        public event OnUserDisconnected UserDisconnected;
-        
-        public delegate void OnConnectionConnect();
-        public event OnConnectionConnect ConnectionConnect;
-
-        public delegate void OnSetUsername(string username);
-        public event OnSetUsername SetUsername;
-
-        public delegate void OnUsernameTaken();
-        public event OnUsernameTaken UsernameTaken;
-
-        public delegate void OnUsernameChanged(string oldUsername, string changedUsername);
-        public event OnUsernameChanged UsernameChanged;
-
-        public delegate void OnUserKicked(string username);
-        public event OnUserKicked UserKicked;
-
-        private bool HasEstablishedConnection()
-        {
-            return cipher != null;
-        }
-
-        private void EstablishConnection(NetworkMessage message)
+        protected override void EstablishConnection(NetworkMessage message)
         {
             try
             {
