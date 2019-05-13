@@ -1,56 +1,78 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Server.Entities;
 using DevOne.Security.Cryptography.BCrypt;
+using Server.Entities;
 
 namespace Server.Repositories
 {
+    /// <summary>
+    /// Should only be used while testing.
+    /// </summary>
     public class LocalUserRepository : IUserRepository
     {
         private List<User> users;
-        private static readonly Object user_lock = new Object();
         private int nextId;
 
         public LocalUserRepository()
         {
             users = new List<User>();
-             nextId = 1;
+            nextId = 1;
         }
 
-        //TODO should make a hardcopy of all the users and make a new list
-        public List<User> Users => users;
-
-        public void DeleteUser(User user)
+        public List<User> Users
         {
-            lock(user_lock)
-                for(int i=0;i<users.Count;i++)
-                    if(users[i].Id == user.Id)
-                    {
-                        users.RemoveAt(i);
-                        break;
-                    }
+            get
+            {
+                List<User> copyUsers = new List<User>();
+
+                foreach(User u in users)
+                    copyUsers.Add(new User(u));
+
+                return copyUsers;
+            }
+        }
+
+        public void Delete(User user)
+        {
+            User foundUser = users.FirstOrDefault(u => u.Id == user.Id);
+            users.Remove(foundUser);
         }
 
         public User Login(string username, string password)
         {
-            for (int i = 0; i < users.Count; i++)
-                if(users[i].Username==username && BCryptHelper.CheckPassword(password,users[i].Password))
-                    return users[i];
-
+            foreach(User u in users)
+                if (u.Username == username && BCryptHelper.CheckPassword(password, u.Password))
+                    return new User(u);
             return null;
         }
 
-        public User SaveUser(User user)
+        public User Register(User user)
         {
-            // Check if a user with the username already exists, if so then check if they have the same id
-                // Check if user id is already registered
-                    // update existing one
-                    // else add the new user
+            User foundUser = users.FirstOrDefault(u => u.Username == user.Username);
+            if (foundUser == null)
+                return null;
 
-            throw new NotImplementedException();
+            user.Id = nextId++;
+
+            users.Add(new User(user));
+
+            return new User(user);
+        }
+
+        public User Update(User user)
+        {
+            User foundUser = users.FirstOrDefault(u => u.Id == user.Id);
+            if (foundUser == null)
+                return null;
+
+            users.Remove(foundUser);
+            users.Add(new User(user));
+
+            return new User(user);
         }
     }
 }

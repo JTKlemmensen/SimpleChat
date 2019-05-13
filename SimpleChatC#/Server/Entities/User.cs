@@ -20,5 +20,19 @@ namespace Server.Entities
             }
         }
         public string Salt { get; private set; }
+
+        public User(string hashedPassword, string salt)
+        {
+            this.password = hashedPassword;
+            this.Salt = salt;
+        }
+
+        public User(User user)
+        {
+            this.Id = user.Id;
+            this.password = user.password;
+            this.Salt = user.Salt;
+            this.Username = user.Username;
+        }
     }
 }

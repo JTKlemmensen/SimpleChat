@@ -11,7 +11,8 @@ namespace Server.Repositories
     {
         List<User> Users { get; }
         User Login(string username, string password);
-        User SaveUser(User user);
-        void DeleteUser(User user);
+        User Register(User user);
+        User Update(User user);
+        void Delete(User user);
     }
 }
