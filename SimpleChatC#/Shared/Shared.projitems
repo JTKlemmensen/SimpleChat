@@ -13,15 +13,20 @@
     <Compile Include="$(MSBuildThisFileDirectory)Gui\ChangeNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\Connection.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\LoginRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\RegisterRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\Response.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\IdleChecker.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Network\MessageProtocols.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Constants\MessageProtocols.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\NetworkMessage.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\NetworkUtil.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Gui\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ciphers\SymmetricCipher.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Constants\ResponseCodes.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Gui\" />
     <Folder Include="$(MSBuildThisFileDirectory)Ciphers\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Network\Constants\" />
   </ItemGroup>
 </Project>

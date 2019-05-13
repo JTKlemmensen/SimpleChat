@@ -1,5 +1,6 @@
 ﻿using Shared.Gui;
 using Shared.Network;
+using Shared.Network.Constants;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;

@@ -1,5 +1,6 @@
 ﻿using Shared.Ciphers;
 using Shared.Network;
+using Shared.Network.Constants;
 using Shared.Network.Entities;
 using System;
 using System.Collections.Generic;
