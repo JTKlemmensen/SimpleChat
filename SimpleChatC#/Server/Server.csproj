@@ -71,6 +71,7 @@
     <Compile Include="Network\Worker.cs" />
     <Compile Include="Network\SimpleServer.cs" />
     <Compile Include="Repositories\IUserRepository.cs" />
+    <Compile Include="Repositories\LocalUserRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\MainWindow.xaml.cs">
