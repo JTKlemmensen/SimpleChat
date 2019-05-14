@@ -72,6 +72,7 @@
     <Compile Include="Network\SimpleServer.cs" />
     <Compile Include="Repositories\IUserRepository.cs" />
     <Compile Include="Repositories\LocalUserRepository.cs" />
+    <Compile Include="Repositories\RepositoryFactory.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Gui\MainWindow.xaml.cs">

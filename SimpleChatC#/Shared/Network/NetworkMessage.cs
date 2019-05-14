@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Shared.Network.Constants;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +10,7 @@ namespace Shared.Network
 {
     public class NetworkMessage
     {
-        public string Protocol { get; set; }
+        public MessageProtocols Protocol { get; set; }
         public string Message { get; set; }
 
         public bool TryGetObject<T>(out T obj)

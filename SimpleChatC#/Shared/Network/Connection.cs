@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using Shared.Ciphers;
+using Shared.Network.Constants;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,7 +14,7 @@ namespace Shared.Network
 {
     public abstract class Connection
     {
-        private Dictionary<string, Action<NetworkMessage>> commands;
+        private Dictionary<MessageProtocols, Action<NetworkMessage>> commands;
         private Socket socket;
         private StreamWriter writer;
         protected SymmetricCipher cipher;
@@ -21,7 +22,7 @@ namespace Shared.Network
         
         public Connection()
         {
-            commands = new Dictionary<string, Action<NetworkMessage>>();
+            commands = new Dictionary<MessageProtocols, Action<NetworkMessage>>();
         }
 
         public void Start(Socket socket)
@@ -66,7 +67,7 @@ namespace Shared.Network
         public delegate void OnConnectionDisconnect();
         public event OnConnectionDisconnect ConnectionDisconnect;
 
-        public void Send(string protocol, object obj = null, bool encrypt = true)
+        public void Send(MessageProtocols protocol, object obj = null, bool encrypt = true)
         {
             if (writer == null || writer.BaseStream == null)
                 return;
@@ -77,9 +78,9 @@ namespace Shared.Network
                 line = JsonConvert.SerializeObject(obj);
 
             if (encrypt && cipher != null)
-                line = NetworkUtil.InsertEscape(cipher.Encrypt(protocol)) + "," + NetworkUtil.InsertEscape(cipher.Encrypt(line));            
+                line = NetworkUtil.InsertEscape(cipher.Encrypt(protocol.ToString())) + "," + NetworkUtil.InsertEscape(cipher.Encrypt(line));            
             else
-                line = NetworkUtil.InsertEscape(protocol) + "," + NetworkUtil.InsertEscape(line);
+                line = NetworkUtil.InsertEscape(protocol.ToString()) + "," + NetworkUtil.InsertEscape(line);
 
             try
             {
@@ -108,9 +109,8 @@ namespace Shared.Network
                     Console.WriteLine();
                 }
 
-            if (arguments.Count() >= 2)
+            if (arguments.Count() >= 2 && Enum.TryParse(arguments[0], out MessageProtocols protocol))
             {
-                string protocol = arguments[0];
                 string message = arguments[1];
                 
                 NetworkMessage networkMessage = new NetworkMessage()
@@ -130,12 +130,12 @@ namespace Shared.Network
             Stop = true;
         }
 
-        protected void AddCommand(string protocol, Action<NetworkMessage> func)
+        protected void AddCommand(MessageProtocols protocol, Action<NetworkMessage> func)
         {
             commands[protocol] = func;
         }
 
-        protected void RemoveCommand(string protocol)
+        protected void RemoveCommand(MessageProtocols protocol)
         {
             if(commands.ContainsKey(protocol))
                 commands.Remove(protocol);
@@ -145,6 +145,7 @@ namespace Shared.Network
         {
             if (!HasEstablishedConnection())
             {
+                Console.WriteLine("SETUP SECURE CONNECT ;)");
                 EstablishConnection(message);
                 return;
             }

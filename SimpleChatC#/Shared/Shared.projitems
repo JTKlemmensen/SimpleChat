@@ -23,10 +23,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Gui\RelayCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Ciphers\SymmetricCipher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\Constants\ResponseCodes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\SymmetricKey.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Gui\" />
     <Folder Include="$(MSBuildThisFileDirectory)Ciphers\" />
-    <Folder Include="$(MSBuildThisFileDirectory)Network\Constants\" />
   </ItemGroup>
 </Project>

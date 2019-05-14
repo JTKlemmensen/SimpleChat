@@ -1,4 +1,6 @@
 ﻿using Server;
+using Server.Entities;
+using Server.Repositories;
 using Shared.Ciphers;
 using Shared.Network;
 using Shared.Network.Constants;
@@ -20,6 +22,7 @@ namespace Shared
 
         public Worker(SimpleServer server, Socket connection, string username) : base()
         {
+            this.AddCommand(MessageProtocols.Login, LoginCommand);
             this.AddCommand(MessageProtocols.Message, MessageCommand);
             this.AddCommand(MessageProtocols.End, EndCommand);
             this.AddCommand(MessageProtocols.Ping, PingCommand);
@@ -33,6 +36,23 @@ namespace Shared
             idle = new IdleChecker(this);
         }
         #region incoming commands from client
+        private void LoginCommand(NetworkMessage message)
+        {
+            if (message.TryGetObject<LoginRequest>(out LoginRequest lr))
+            {
+                User user = RepositoryFactory.UserRepository.Login(lr.Username,lr.Password);
+
+                if(user == null)
+                    this.Send(MessageProtocols.Fail, ResponseCodes.Bad_Login);
+                else
+                {
+                        
+                    // Tell client sucess
+                    // Tell other clients another user has logged in
+                }
+            }
+        }
+
         private void MessageCommand(NetworkMessage message)
         {
             if (message.TryGetObject<string>(out string m))
@@ -82,21 +102,28 @@ namespace Shared
             //Generate symmetric key + IV, save it and encrypt it with the given public assymetric key and send it to the client.   
             try
             {
-                Console.WriteLine("Server modtod: ");
-                Console.WriteLine(message.Protocol);
-                AsymmetricCipher asymmetric = new AsymmetricCipher();
-                asymmetric.LoadPublicKey(message.Protocol);   
-                cipher = new SymmetricCipher();
+                if (message.TryGetObject<string>(out string publicKey))
+                {
 
-                Send(asymmetric.Encrypt(cipher.Key), asymmetric.Encrypt(cipher.IV),false);
-                Send(MessageProtocols.SetUsername, Username);
-                server.Broadcast(MessageProtocols.Connect, this, Username); // Tell users that it connected
-                Send(MessageProtocols.Users, server.ConnectedUsers().ToArray());
+
+                    Console.WriteLine("Server modtod: ");
+                    Console.WriteLine(message.Protocol);
+                    AsymmetricCipher asymmetric = new AsymmetricCipher();
+                    asymmetric.LoadPublicKey(publicKey);
+                    cipher = new SymmetricCipher();
+
+                    SymmetricKey key = new SymmetricKey { Key = asymmetric.Encrypt(cipher.Key), IV = asymmetric.Encrypt(cipher.IV) };
+
+                    Send(MessageProtocols.Setup, key, false);
+                    Send(MessageProtocols.SetUsername, Username);
+                    server.Broadcast(MessageProtocols.Connect, this, Username); // Tell users that it connected
+                    Send(MessageProtocols.Users, server.ConnectedUsers().ToArray());
+                } else
+                    throw new Exception("Failed to load the public key");
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                Console.WriteLine(e.StackTrace);
-                //Terminate();
+                Terminate();
             }
         }
 

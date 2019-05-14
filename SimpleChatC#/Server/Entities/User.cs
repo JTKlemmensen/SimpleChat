@@ -34,5 +34,10 @@ namespace Server.Entities
             this.Salt = user.Salt;
             this.Username = user.Username;
         }
+
+        public User()
+        {
+
+        }
     }
 }

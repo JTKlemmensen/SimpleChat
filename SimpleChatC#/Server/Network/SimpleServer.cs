@@ -113,12 +113,12 @@ namespace Server
         /// </summary>
         /// <param name="message">The message to sent to the users</param>
         /// <param name="worker">The work that does not receive the message</param>
-        public void Broadcast(string protocol, object obj)
+        public void Broadcast(MessageProtocols protocol, object obj)
         {
             Broadcast(protocol, null, obj);
         }
 
-        public void Broadcast(string protocol, Worker worker, object obj)
+        public void Broadcast(MessageProtocols protocol, Worker worker, object obj)
         {
             lock(workersLock)
                 foreach (Worker w in workers)

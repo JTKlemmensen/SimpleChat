@@ -148,11 +148,11 @@ namespace Client.Network
         {
             try
             {
-                if (message.TryGetObject<string>(out string iv))
+                if (message.TryGetObject<SymmetricKey>(out SymmetricKey key))
                 {
                     cipher = new SymmetricCipher();
-                    string Key = asymCipher.Decrypt(message.Protocol);
-                    string IV = asymCipher.Decrypt(iv);
+                    string Key = asymCipher.Decrypt(key.Key);
+                    string IV = asymCipher.Decrypt(key.IV);
 
                     cipher.Key = Key;
                     cipher.IV = IV;
@@ -171,7 +171,7 @@ namespace Client.Network
             asymCipher = new AsymmetricCipher();
             Console.WriteLine("CLIENT sender: ");
             Console.WriteLine(asymCipher.PublicKey());
-            Send(asymCipher.PublicKey(),"");
+            Send(MessageProtocols.Setup, asymCipher.PublicKey());
         }
 
         public override void Terminate()
