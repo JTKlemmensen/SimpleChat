@@ -104,10 +104,6 @@ namespace Shared
             {
                 if (message.TryGetObject<string>(out string publicKey))
                 {
-
-
-                    Console.WriteLine("Server modtod: ");
-                    Console.WriteLine(message.Protocol);
                     AsymmetricCipher asymmetric = new AsymmetricCipher();
                     asymmetric.LoadPublicKey(publicKey);
                     cipher = new SymmetricCipher();

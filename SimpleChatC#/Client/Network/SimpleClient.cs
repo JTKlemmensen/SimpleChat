@@ -169,8 +169,6 @@ namespace Client.Network
         private void SetupConnection()
         {
             asymCipher = new AsymmetricCipher();
-            Console.WriteLine("CLIENT sender: ");
-            Console.WriteLine(asymCipher.PublicKey());
             Send(MessageProtocols.Setup, asymCipher.PublicKey());
         }
 

@@ -103,12 +103,8 @@ namespace Shared.Network
 
             if (cipher != null)
                 for (int i = 0; i < arguments.Count(); i++)
-                {
                     arguments[i] = cipher.Decrypt(arguments[i]);
-                    Console.Write(arguments[i] + " ");
-                    Console.WriteLine();
-                }
-
+            
             if (arguments.Count() >= 2 && Enum.TryParse(arguments[0], out MessageProtocols protocol))
             {
                 string message = arguments[1];
@@ -145,7 +141,6 @@ namespace Shared.Network
         {
             if (!HasEstablishedConnection())
             {
-                Console.WriteLine("SETUP SECURE CONNECT ;)");
                 EstablishConnection(message);
                 return;
             }
