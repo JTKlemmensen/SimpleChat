@@ -35,5 +35,10 @@ namespace SimpleChat.Gui
                 (DataContext as MainWindowViewModel).Terminate();
             }
         }
+
+        private void MessagesArea_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            MessagesAreaScroller.ScrollToEnd();
+        }
     }
 }
