@@ -4,9 +4,9 @@ using System.Text;
 
 namespace Shared.Network.Constants
 {
-    public class ResponseCodes
+    public enum ResponseCodes
     {
-        public const int Bad_Login = 0;
-        public const int Username_Taken = 1;
+        Bad_Login,
+        Username_Taken
     }
 }

@@ -20,7 +20,7 @@ namespace Shared.Network
                 obj = JsonConvert.DeserializeObject<T>(Message);
                 return true;
             }
-            catch (Exception e)
+            catch (Exception)
             {
                 obj = default(T);
                 return false;
