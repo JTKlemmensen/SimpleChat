@@ -18,6 +18,7 @@ namespace SimpleChat.Gui.Chat
 {
     class ChatWindowViewModel : ChangeNotifier
     {
+        #region Fields
         private SimpleClient _client;
 
         private bool _isConnected;
@@ -33,33 +34,9 @@ namespace SimpleChat.Gui.Chat
         private bool _canChangeServerPort;
 
         private string _messageToSend;
+        #endregion
 
-        public ChatWindowViewModel()
-        {
-            // upgrading settings: https://stackoverflow.com/a/534335
-            if (Properties.Settings.Default.UpgradeRequired)
-            {
-                Properties.Settings.Default.Upgrade();
-                Properties.Settings.Default.UpgradeRequired = false;
-                Properties.Settings.Default.Save();
-            }
-            IsConnected = false;
-            ToggleConnectionButtonText = "Connect";
-            CanChangeServerIP = true;
-            CanChangeServerPort = true;
-            ChatText = "";
-            Users = new ObservableCollection<string>();
-
-            ServerIP = Properties.Settings.Default.LastUsedIP.ToString();
-            ServerPort = Properties.Settings.Default.LastUsedPort.ToString();
-        }
-
-        public void Terminate()
-        {
-            _client?.Terminate();
-            _client = null;
-        }
-
+        #region Observer Properties
         public bool IsConnected
         {
             get { return _isConnected; }
@@ -119,48 +96,30 @@ namespace SimpleChat.Gui.Chat
             get { return _messageToSend; }
             set { _messageToSend = value; NotifyPropertyChanged(); }
         }
+        
+        #endregion
 
-        public ICommand ToggleConnection
+        public ChatWindowViewModel()
         {
-            get { return new RelayCommand(ConnectOrDisconnect); }
-        }
-
-        private void RunOnUIThread(Action action)
-        {
-            Application.Current.Dispatcher.Invoke(action);
-        }
-
-        private void ConnectOrDisconnect()
-        {
-            if (IsConnected)
+            // upgrading settings: https://stackoverflow.com/a/534335
+            if (Properties.Settings.Default.UpgradeRequired)
             {
-                Terminate();
+                Properties.Settings.Default.Upgrade();
+                Properties.Settings.Default.UpgradeRequired = false;
+                Properties.Settings.Default.Save();
             }
-            else
-            {
-                if (int.TryParse(ServerPort, out int port))
-                {
-                    Properties.Settings.Default.LastUsedIP = ServerIP;
-                    Properties.Settings.Default.LastUsedPort = port;
-                    Properties.Settings.Default.Save();
-                    _client = new SimpleClient(ServerIP, port);
-                    _client.NewMessage += ClientNewMessage;
-                    _client.UserConnected += ClientUserConnected;
-                    _client.TotalUsers += ClientTotalUsers;
-                    _client.UserDisconnected += ClientUserDisconnected;
+            IsConnected = false;
+            ToggleConnectionButtonText = "Connect";
+            CanChangeServerIP = true;
+            CanChangeServerPort = true;
+            ChatText = "";
+            Users = new ObservableCollection<string>();
 
-                    _client.SetUsername += ClientSetUsername;
-                    _client.UsernameTaken += ClientUsernameTaken;
-                    _client.UsernameChanged += ClientUsernameChanged;
-
-                    _client.ConnectionConnect += ClientConnectedToServer;
-                    _client.ConnectionDisconnect += ClientDisconnectedToServer;
-
-                    _client.UserKicked += ClientUserKicked;
-                }
-            }
+            ServerIP = Properties.Settings.Default.LastUsedIP.ToString();
+            ServerPort = Properties.Settings.Default.LastUsedPort.ToString();
         }
 
+        #region Server Events
         private void ClientUserKicked(string username)
         {
             if (username == Username)
@@ -189,14 +148,6 @@ namespace SimpleChat.Gui.Chat
             });
             ChatText += "\n[" + oldUsername + " changed their username to " + changedUsername + "]";
             SortUserList();
-        }
-
-        private void SortUserList()
-        {
-            RunOnUIThread(() =>
-            {
-                Users = new ObservableCollection<string>(Users.OrderBy(i => i));
-            });
         }
 
         private void ClientConnectedToServer()
@@ -259,9 +210,80 @@ namespace SimpleChat.Gui.Chat
             ChatText += "\n[" + sender + "]: " + message;
         }
 
+        #endregion
+        
+        #region Commands
+        public ICommand ToggleConnection
+        {
+            get { return new RelayCommand(ConnectOrDisconnect); }
+        }
+
         public ICommand SendMessage
         {
             get { return new RelayCommand(SendMessageToServer); }
+        }
+        
+        public ICommand ClearMessage
+        {
+            get { return new RelayCommand(ClearMessageCurrentlyBeingTyped); }
+        }
+        
+        public ICommand SetUsername
+        {
+            get { return new RelayCommand(SendChangedUsername); }
+        }
+
+        #endregion
+
+        #region Methods
+        public void Terminate()
+        {
+            _client?.Terminate();
+            _client = null;
+        }
+
+        private void RunOnUIThread(Action action)
+        {
+            Application.Current.Dispatcher.Invoke(action);
+        }
+
+        private void ConnectOrDisconnect()
+        {
+            if (IsConnected)
+            {
+                Terminate();
+            }
+            else
+            {
+                if (int.TryParse(ServerPort, out int port))
+                {
+                    Properties.Settings.Default.LastUsedIP = ServerIP;
+                    Properties.Settings.Default.LastUsedPort = port;
+                    Properties.Settings.Default.Save();
+                    _client = new SimpleClient(ServerIP, port);
+                    _client.NewMessage += ClientNewMessage;
+                    _client.UserConnected += ClientUserConnected;
+                    _client.TotalUsers += ClientTotalUsers;
+                    _client.UserDisconnected += ClientUserDisconnected;
+
+                    _client.SetUsername += ClientSetUsername;
+                    _client.UsernameTaken += ClientUsernameTaken;
+                    _client.UsernameChanged += ClientUsernameChanged;
+
+                    _client.ConnectionConnect += ClientConnectedToServer;
+                    _client.ConnectionDisconnect += ClientDisconnectedToServer;
+
+                    _client.UserKicked += ClientUserKicked;
+                }
+            }
+        }
+
+        private void SortUserList()
+        {
+            RunOnUIThread(() =>
+            {
+                Users = new ObservableCollection<string>(Users.OrderBy(i => i));
+            });
         }
 
         private void SendMessageToServer()
@@ -270,24 +292,16 @@ namespace SimpleChat.Gui.Chat
             ClearMessageCurrentlyBeingTyped();
         }
 
-        public ICommand ClearMessage
-        {
-            get { return new RelayCommand(ClearMessageCurrentlyBeingTyped); }
-        }
-
         private void ClearMessageCurrentlyBeingTyped()
         {
             MessageToSend = "";
-        }
-
-        public ICommand SetUsername
-        {
-            get { return new RelayCommand(SendChangedUsername); }
         }
 
         private void SendChangedUsername()
         {
             _client?.Send(MessageProtocols.SetUsername, Username);
         }
+        #endregion
+
     }
 }
