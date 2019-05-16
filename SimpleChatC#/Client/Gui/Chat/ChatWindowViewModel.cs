@@ -20,8 +20,7 @@ namespace SimpleChat.Gui.Chat
     {
         #region Fields
         private SimpleClient _client;
-
-        private bool _isConnected;
+        
         private string _chatText;
         private ObservableCollection<string> _users;
         private string _username;
@@ -37,11 +36,6 @@ namespace SimpleChat.Gui.Chat
         #endregion
 
         #region Observer Properties
-        public bool IsConnected
-        {
-            get { return _isConnected; }
-            set { _isConnected = value; NotifyPropertyChanged(); }
-        }
 
         public bool CanChangeServerIP
         {
@@ -108,7 +102,6 @@ namespace SimpleChat.Gui.Chat
                 Properties.Settings.Default.UpgradeRequired = false;
                 Properties.Settings.Default.Save();
             }
-            IsConnected = false;
             ToggleConnectionButtonText = "Connect";
             CanChangeServerIP = true;
             CanChangeServerPort = true;
@@ -152,7 +145,6 @@ namespace SimpleChat.Gui.Chat
 
         private void ClientConnectedToServer()
         {
-            IsConnected = true;
             ToggleConnectionButtonText = "Disconnect";
             CanChangeServerIP = false;
             CanChangeServerPort = false;
@@ -169,7 +161,6 @@ namespace SimpleChat.Gui.Chat
             {
                 Users.Clear();
             });
-            IsConnected = false;
             ToggleConnectionButtonText = "Connect";
             CanChangeServerIP = true;
             CanChangeServerPort = true;
@@ -249,7 +240,7 @@ namespace SimpleChat.Gui.Chat
 
         private void ConnectOrDisconnect()
         {
-            if (IsConnected)
+            if (_client != null)
             {
                 Terminate();
             }
