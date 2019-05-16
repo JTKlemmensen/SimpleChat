@@ -14,9 +14,9 @@ using System.Windows;
 using System.Windows.Input;
 using System.Windows.Threading;
 
-namespace SimpleChat.Gui
+namespace SimpleChat.Gui.Chat
 {
-    class MainWindowViewModel : ChangeNotifier
+    class ChatWindowViewModel : ChangeNotifier
     {
         private SimpleClient _client;
 
@@ -34,7 +34,7 @@ namespace SimpleChat.Gui
 
         private string _messageToSend;
 
-        public MainWindowViewModel()
+        public ChatWindowViewModel()
         {
             // upgrading settings: https://stackoverflow.com/a/534335
             if (Properties.Settings.Default.UpgradeRequired)

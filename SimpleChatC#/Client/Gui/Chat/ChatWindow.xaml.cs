@@ -16,23 +16,23 @@ using System.Windows.Media.Imaging;
 using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SimpleChat.Gui
+namespace SimpleChat.Gui.Chat
 {
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class ChatWindow : Window
     {
-        public MainWindow()
+        public ChatWindow()
         {
             InitializeComponent();
         }
         
         private void Window_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            if (DataContext is MainWindowViewModel)
+            if (DataContext is ChatWindowViewModel)
             {
-                (DataContext as MainWindowViewModel).Terminate();
+                (DataContext as ChatWindowViewModel).Terminate();
             }
         }
 
