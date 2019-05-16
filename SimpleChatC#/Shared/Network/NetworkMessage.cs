@@ -22,7 +22,6 @@ namespace Shared.Network
             }
             catch (Exception e)
             {
-                Console.WriteLine(e.StackTrace);
                 obj = default(T);
                 return false;
             }
