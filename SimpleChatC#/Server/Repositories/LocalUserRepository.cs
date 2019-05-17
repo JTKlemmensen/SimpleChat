@@ -21,6 +21,9 @@ namespace Server.Repositories
         {
             users = new List<User>();
             nextId = 1;
+
+            Register(new User { Password="admin",Username="admin"});
+            Console.WriteLine(Login("admin","admin")!=null);
         }
 
         public List<User> Users
@@ -53,7 +56,7 @@ namespace Server.Repositories
         public User Register(User user)
         {
             User foundUser = users.FirstOrDefault(u => u.Username == user.Username);
-            if (foundUser == null)
+            if (foundUser != null)
                 return null;
 
             user.Id = nextId++;
