@@ -35,7 +35,7 @@ namespace SimpleChat.Gui.Register
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            controller.GotoConnect();
+            controller.TerminateConnection();
         }
     }
 }

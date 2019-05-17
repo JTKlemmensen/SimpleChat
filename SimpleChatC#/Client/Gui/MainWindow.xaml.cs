@@ -1,4 +1,5 @@
-﻿using SimpleChat.Gui.Connect;
+﻿using Client.Network;
+using SimpleChat.Gui.Connect;
 using SimpleChat.Gui.Login;
 using SimpleChat.Gui.Register;
 using System;
@@ -22,11 +23,15 @@ namespace SimpleChat.Gui
     /// </summary>
     public partial class MainWindow : Window, IWindowController
     {
+        private SimpleClient client;
+
         public MainWindow()
         {
             InitializeComponent();
             GotoConnect();
         }
+
+        public SimpleClient ChatClient => client;
 
         public void GotoLogin()
         {
@@ -40,11 +45,6 @@ namespace SimpleChat.Gui
             Content.Children.Add(new ConnectControl(this));
         }
 
-        public void GotoStartScreen()
-        {
-
-        }
-
         public void GotoRegister()
         {
             Content.Children.Clear();
@@ -54,6 +54,14 @@ namespace SimpleChat.Gui
         public void GotoChat()
         {
             
+        }
+
+        public void TerminateConnection()
+        {
+            if (client != null)
+                client.Terminate();
+            client = null;
+            GotoConnect();
         }
     }
 }

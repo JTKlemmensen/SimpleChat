@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Client.Network;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,13 +9,15 @@ namespace SimpleChat.Gui
 {
     public interface IWindowController
     {
+        SimpleClient ChatClient { get; }
+
+        void TerminateConnection();
+
         void GotoConnect();
 
-        void GotoLogin();
-
-        void GotoStartScreen();
-
         void GotoRegister();
+
+        void GotoLogin();
 
         void GotoChat();
     }
