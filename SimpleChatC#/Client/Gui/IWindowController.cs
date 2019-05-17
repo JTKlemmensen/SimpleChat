@@ -11,6 +11,8 @@ namespace SimpleChat.Gui
     {
         SimpleClient ChatClient { get; }
 
+        void Connect(string ip, int port);
+
         void TerminateConnection();
 
         void GotoConnect();

@@ -63,5 +63,28 @@ namespace SimpleChat.Gui
             client = null;
             GotoConnect();
         }
+
+        public void Connect(string ip, int port)
+        {
+            client = new SimpleClient(ip, port);
+            client.ConnectionDisconnect += OnSimpleClientDisconnected;
+            client.ConnectionConnect += OnSimpleClientConnected;
+        }
+
+        private void OnSimpleClientDisconnected()
+        {
+            client = null;
+            RunOnUIThread(()=> GotoConnect());
+        }
+
+        private void OnSimpleClientConnected()
+        {
+            RunOnUIThread(() => GotoLogin());
+        }
+
+        private void RunOnUIThread(Action action)
+        {
+            Application.Current.Dispatcher.Invoke(action);
+        }
     }
 }

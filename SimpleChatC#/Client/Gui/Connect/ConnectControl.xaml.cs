@@ -29,7 +29,8 @@ namespace SimpleChat.Gui.Connect
 
         private void ConnectToServer(object sender, RoutedEventArgs e)
         {
-            controller.GotoLogin();
+            if(int.TryParse(port.Text,out int port2))
+                controller.Connect(ip.Text, port2);
         }
     }
 }

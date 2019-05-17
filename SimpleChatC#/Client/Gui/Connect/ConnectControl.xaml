@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:local="clr-namespace:SimpleChat.Gui.Connect"
              mc:Ignorable="d">
-    <Grid Margin="20">
+    <Grid Margin="10">
         <Grid.RowDefinitions>
             <RowDefinition/>
             <RowDefinition/>
@@ -19,8 +19,8 @@
 
         <Label Grid.Row="0" Content="Ip"/>
         <Label Grid.Row="0" Grid.Column="1" Content="Port"/>
-        <TextBox Grid.Row="1" Width="160" Height="23" Margin="0,5,5,5" ></TextBox>
-        <TextBox Grid.Row="1" Grid.Column="1" Width="80" Height="23" Margin="0,5,5,5"></TextBox>
+        <TextBox x:Name="ip" Grid.Row="1" Width="160" Height="23" Margin="0,5,5,5" ></TextBox>
+        <TextBox x:Name="port" Grid.Row="1" Grid.Column="1" Width="80" Height="23" Margin="0,5,5,5"></TextBox>
         <Button Grid.Row="1" Grid.Column="2" Content="Connect" Grid.RowSpan="2" Height="23" Width="100" Margin="0,5,0,5" Click="ConnectToServer"></Button>
     </Grid>
 </UserControl>
