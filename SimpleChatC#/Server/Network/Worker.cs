@@ -16,6 +16,7 @@ namespace Shared
 {
     public class Worker : Connection
     {
+        public User User { get; private set; }
         public string Username { get; private set; }
         private SimpleServer server;
         private IdleChecker idle;
@@ -46,7 +47,11 @@ namespace Shared
                     this.Send(MessageProtocols.Fail, ResponseCodes.Bad_Login);
                 else
                 {
-                        
+                    User = user;
+                    LoginSuccess success = new LoginSuccess();
+                    success.Users = server.ConnectedUsers();
+
+                    Send(MessageProtocols.LoginSuccess, success);
                     // Tell client sucess
                     // Tell other clients another user has logged in
                 }

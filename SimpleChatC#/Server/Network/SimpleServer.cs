@@ -158,7 +158,7 @@ namespace Server
             lock (workersLock)
             {
                 List<string> users = new List<string>();
-                workers.ForEach(w => users.Add(w.Username));
+                workers.ForEach(w => users.Add(w.User?.Username));
                 return users;
             }
         }

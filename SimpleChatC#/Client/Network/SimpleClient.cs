@@ -21,6 +21,8 @@ namespace Client.Network
         {
             try
             {
+                this.AddCommand(MessageProtocols.LoginSuccess, LoginSuccessCommand);
+                this.AddCommand(MessageProtocols.Fail, FailCommand);
                 this.AddCommand(MessageProtocols.Connect, ConnectCommand);
                 this.AddCommand(MessageProtocols.Disconnect, DisconnectCommand);
                 this.AddCommand(MessageProtocols.Message, MessageCommand);
@@ -43,7 +45,31 @@ namespace Client.Network
             catch (Exception){}
         }
 
+        internal void Register(string text, string password)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void Login(string username, string password)
+        {
+            LoginRequest request = new LoginRequest {Username=username,Password=password };
+            Send(MessageProtocols.Login, request);
+        }
+
         #region incoming commands from server
+        private void LoginSuccessCommand(NetworkMessage message)
+        {
+            Console.WriteLine("Success!!!");
+            if (message.TryGetObject<LoginSuccess>(out LoginSuccess success))
+                LoginSuccess?.Invoke(success.Users);
+        }
+
+        private void FailCommand(NetworkMessage message)
+        {
+            if (message.TryGetObject<ResponseCodes>(out ResponseCodes code))
+                FailedAction?.Invoke(code);
+        }
+
         private void ConnectCommand(NetworkMessage message)
         {
             if (message.TryGetObject<string>(out string connectedUser))
@@ -111,6 +137,12 @@ namespace Client.Network
         */
         #endregion
         #region outgoing events
+        public delegate void LoginSuccessEventHandler(List<string> users);
+        public event LoginSuccessEventHandler LoginSuccess;
+
+        public delegate void FailedActionEventHandler(ResponseCodes code);
+        public event FailedActionEventHandler FailedAction;
+
         public delegate void NewMessageEventHandler(string message, string sender);
         public event NewMessageEventHandler NewMessage;
 

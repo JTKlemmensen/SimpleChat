@@ -1,4 +1,5 @@
 ﻿using Client.Network;
+using Shared.Network.Constants;
 using SimpleChat.Gui.Connect;
 using SimpleChat.Gui.Login;
 using SimpleChat.Gui.Register;
@@ -69,6 +70,28 @@ namespace SimpleChat.Gui
             client = new SimpleClient(ip, port);
             client.ConnectionDisconnect += OnSimpleClientDisconnected;
             client.ConnectionConnect += OnSimpleClientConnected;
+
+            client.FailedAction += Client_FailedAction;
+            client.LoginSuccess += Client_LoginSuccess;
+        }
+
+        private void Client_LoginSuccess(List<string> users)
+        {
+            MessageBox.Show("Successfully logged in! However, the chat is not fully implemented yet",
+                              "Confirmation",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Information);
+        }
+
+        private void Client_FailedAction(ResponseCodes code)
+        {
+            if(ResponseCodes.Bad_Login == code)
+            {
+                MessageBox.Show("Failed to log in",
+                                          "Confirmation",
+                                          MessageBoxButton.OK,
+                                          MessageBoxImage.Information);
+            }
         }
 
         private void OnSimpleClientDisconnected()
