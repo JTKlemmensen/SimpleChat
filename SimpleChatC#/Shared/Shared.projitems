@@ -12,9 +12,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)Ciphers\AsymmetricCipher.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Gui\ChangeNotifier.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\Connection.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\Message.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\LoginRequest.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\RegisterRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\ServerToClient\LoginSuccess.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\ServerToClient\Message.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\ClientToServer\LoginRequest.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Network\Entities\ClientToServer\RegisterRequest.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\IdleChecker.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\Constants\MessageProtocols.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Network\NetworkMessage.cs" />
@@ -27,5 +28,8 @@
   <ItemGroup>
     <Folder Include="$(MSBuildThisFileDirectory)Gui\" />
     <Folder Include="$(MSBuildThisFileDirectory)Ciphers\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Network\Entities\ClientToServer\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Network\Entities\Both\" />
+    <Folder Include="$(MSBuildThisFileDirectory)Network\Entities\ServerToClient\" />
   </ItemGroup>
 </Project>

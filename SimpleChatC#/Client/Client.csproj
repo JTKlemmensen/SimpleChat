@@ -59,11 +59,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
-    <Page Include="Gui\Register\RegisterWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
+    <Page Include="Gui\Connect\ConnectControl.xaml">
       <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Gui\Login\LoginWindow.xaml">
+    <Page Include="Gui\Login\LoginControl.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\MainWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Gui\Register\RegisterControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -75,13 +83,20 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Gui\Register\RegisterWindow.xaml.cs">
-      <DependentUpon>RegisterWindow.xaml</DependentUpon>
+    <Compile Include="Gui\Connect\ConnectControl.xaml.cs">
+      <DependentUpon>ConnectControl.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Gui\Login\LoginWindow.xaml.cs">
-      <DependentUpon>LoginWindow.xaml</DependentUpon>
+    <Compile Include="Gui\Login\LoginControl.xaml.cs">
+      <DependentUpon>LoginControl.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Gui\Register\RegisterControl.xaml.cs">
+      <DependentUpon>RegisterControl.xaml</DependentUpon>
     </Compile>
     <Compile Include="Gui\Chat\ChatWindowViewModel.cs" />
+    <Compile Include="Gui\IWindowController.cs" />
     <Compile Include="Network\SimpleClient.cs" />
     <Compile Include="Gui\Chat\ChatWindow.xaml.cs">
       <DependentUpon>ChatWindow.xaml</DependentUpon>

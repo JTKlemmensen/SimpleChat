@@ -10,18 +10,26 @@ using System.Windows.Documents;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 using System.Windows.Shapes;
 
-namespace SimpleChat.Gui.Login
+namespace SimpleChat.Gui.Connect
 {
     /// <summary>
-    /// Interaction logic for LoginWindow.xaml
+    /// Interaction logic for ConnectControl.xaml
     /// </summary>
-    public partial class LoginWindow : Window
+    public partial class ConnectControl : UserControl
     {
-        public LoginWindow()
+        private IWindowController controller;
+        public ConnectControl(IWindowController controller)
         {
             InitializeComponent();
+            this.controller = controller;
+        }
+
+        private void Button_Click(object sender, RoutedEventArgs e)
+        {
+            controller.GotoLogin();
         }
     }
 }
