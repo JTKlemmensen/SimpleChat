@@ -30,13 +30,17 @@ namespace SimpleChat.Gui.Login
 
         private void OnGotoRegisterAccount(object sender, MouseButtonEventArgs e)
         {
-            //TODO 
             controller.GotoRegister();
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void Cancel(object sender, RoutedEventArgs e)
         {
             controller.TerminateConnection();
+        }
+
+        private void Login(object sender, RoutedEventArgs e)
+        {
+            controller.ChatClient.Login(username.Text, password.Password);
         }
     }
 }
