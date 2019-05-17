@@ -27,7 +27,7 @@ namespace SimpleChat.Gui.Connect
             this.controller = controller;
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void ConnectToServer(object sender, RoutedEventArgs e)
         {
             controller.GotoLogin();
         }
