@@ -1,7 +1,6 @@
 ﻿<Application x:Class="SimpleChat.App"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             xmlns:local="clr-namespace:SimpleChat.Gui"
              StartupUri="Gui/Chat/ChatWindow.xaml">
     <Application.Resources>
          
