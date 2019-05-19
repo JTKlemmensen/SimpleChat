@@ -60,7 +60,7 @@ namespace Shared.Network
         private void CheckIfUserIsIdle()
         {
             HasPonged = false;
-            connection.Send(MessageProtocols.Ping, true);
+            connection.Ping();
             stopWatch.Reset();
             stopWatch.Start();
         }

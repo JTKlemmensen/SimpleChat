@@ -22,7 +22,7 @@ namespace Server.Repositories
             users = new List<User>();
             nextId = 1;
 
-            Register(new User { Password="admin",Username="admin"});
+            Register(new User { Password="admin1",Username="admin"});
             Console.WriteLine(Login("admin","admin")!=null);
         }
 
@@ -45,6 +45,14 @@ namespace Server.Repositories
             users.Remove(foundUser);
         }
 
+        public bool IsUsernameTaken(string username)
+        {
+            foreach (User u in users)
+                if (u.Username == username)
+                    return true;
+            return false;
+        }
+
         public User Login(string username, string password)
         {
             foreach(User u in users)
@@ -55,9 +63,11 @@ namespace Server.Repositories
 
         public User Register(User user)
         {
-            User foundUser = users.FirstOrDefault(u => u.Username == user.Username);
-            if (foundUser != null)
-                return null;
+            if (user == null || user.Username == null || user.Password == null)
+                throw new Exception();
+
+            if (IsUsernameTaken(user.Username))
+                throw new UsernameIsTakenException();
 
             user.Id = nextId++;
 

@@ -45,16 +45,27 @@ namespace Client.Network
             catch (Exception){}
         }
 
-        internal void Register(string text, string password)
+        #region commands to the server
+        public void Register(string username, string password)
         {
-            throw new NotImplementedException();
+            RegisterRequest request = new RegisterRequest();
+            request.Username = username;
+            request.Password = password;
+            Send(MessageProtocols.Register, request);
         }
 
         public void Login(string username, string password)
         {
-            LoginRequest request = new LoginRequest {Username=username,Password=password };
+            LoginRequest request = new LoginRequest { Username = username, Password = password };
             Send(MessageProtocols.Login, request);
         }
+
+        public void SendMessage(string message)
+        {
+            Send(MessageProtocols.Message, message);
+        }
+
+        #endregion
 
         #region incoming commands from server
         private void LoginSuccessCommand(NetworkMessage message)
@@ -170,11 +181,6 @@ namespace Client.Network
         public delegate void UserKickedEventHandler(string username);
         public event UserKickedEventHandler UserKicked;
         #endregion
-
-        public void SendMessage(string message)
-        {
-            Send(MessageProtocols.Message, message);
-        }
 
         protected override void EstablishConnection(NetworkMessage message)
         {

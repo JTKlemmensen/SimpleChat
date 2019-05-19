@@ -7,6 +7,8 @@ namespace Shared.Network.Constants
     public enum MessageProtocols
     {
         Setup,
+        Register,
+        RegisterSuccess,
         LoginSuccess,
         Login,
         Fail,

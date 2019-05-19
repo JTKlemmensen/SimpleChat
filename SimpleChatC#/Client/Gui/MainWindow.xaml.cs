@@ -1,5 +1,6 @@
 ﻿using Client.Network;
 using Shared.Network.Constants;
+using SimpleChat.Gui.Chat;
 using SimpleChat.Gui.Connect;
 using SimpleChat.Gui.Login;
 using SimpleChat.Gui.Register;
@@ -7,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
@@ -54,7 +56,8 @@ namespace SimpleChat.Gui
 
         public void GotoChat()
         {
-            
+            Content.Children.Clear();
+            Content.Children.Add(new ChatControl(this));
         }
 
         public void TerminateConnection()
@@ -77,21 +80,35 @@ namespace SimpleChat.Gui
 
         private void Client_LoginSuccess(List<string> users)
         {
-            MessageBox.Show("Successfully logged in! However, the chat is not fully implemented yet",
-                              "Confirmation",
-                              MessageBoxButton.OK,
-                              MessageBoxImage.Information);
+            RunOnUIThread(() => GotoChat());
         }
 
         private void Client_FailedAction(ResponseCodes code)
         {
-            if(ResponseCodes.Bad_Login == code)
+            RunOnUIThread( () =>
             {
-                MessageBox.Show("Failed to log in",
-                                          "Confirmation",
-                                          MessageBoxButton.OK,
-                                          MessageBoxImage.Information);
-            }
+                if (ResponseCodes.Bad_Login == code)
+                {
+                    MessageBox.Show(this,"Failed to log in",
+                                              "Confirmation",
+                                              MessageBoxButton.OK,
+                                              MessageBoxImage.Information);
+                }
+                else if (ResponseCodes.Unsecure_Password == code)
+                {
+                    MessageBox.Show(this,"Unsecure password! Must have a length of at least 6 characters, contains at least 1 letter and 1 number",
+                              "Confirmation",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Information);
+                }
+                else if (ResponseCodes.Username_Taken == code)
+                {
+                    MessageBox.Show(this,"The username is already taken",
+                              "Confirmation",
+                              MessageBoxButton.OK,
+                              MessageBoxImage.Information);
+                }
+            });
         }
 
         private void OnSimpleClientDisconnected()

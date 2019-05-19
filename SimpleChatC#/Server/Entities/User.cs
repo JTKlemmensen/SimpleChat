@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using DevOne.Security.Cryptography.BCrypt;
 
 namespace Server.Entities
@@ -15,6 +17,9 @@ namespace Server.Entities
             get => password;
             set
             {
+                if (value.Length < 6 || !ContainsLetter(value) || !ContainsNumber(value))
+                    throw new UnsecurePasswordException();
+
                 Salt = BCryptHelper.GenerateSalt();
                 password = BCryptHelper.HashPassword(value, Salt);
             }
@@ -38,6 +43,16 @@ namespace Server.Entities
         public User()
         {
 
+        }
+
+        private bool ContainsLetter(string text)
+        {
+            return Regex.Matches(text, @"[a-zA-Z]").Count > 0;
+        }
+
+        private bool ContainsNumber(string text)
+        {
+            return text.Any(Char.IsDigit);
         }
     }
 }

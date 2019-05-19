@@ -13,6 +13,7 @@ namespace Server.Repositories
         User Login(string username, string password);
         User Register(User user);
         User Update(User user);
+        bool IsUsernameTaken(string username);
         void Delete(User user);
     }
 }

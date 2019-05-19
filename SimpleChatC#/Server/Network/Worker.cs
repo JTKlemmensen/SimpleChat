@@ -23,6 +23,8 @@ namespace Shared
 
         public Worker(SimpleServer server, Socket connection, string username) : base()
         {
+            
+            this.AddCommand(MessageProtocols.Register, RegisterCommand);
             this.AddCommand(MessageProtocols.Login, LoginCommand);
             this.AddCommand(MessageProtocols.Message, MessageCommand);
             this.AddCommand(MessageProtocols.End, EndCommand);
@@ -37,6 +39,27 @@ namespace Shared
             idle = new IdleChecker(this);
         }
         #region incoming commands from client
+        private void RegisterCommand(NetworkMessage message)
+        {
+            if (message.TryGetObject<RegisterRequest>(out RegisterRequest rl))
+            {
+                try
+                {
+                    User user = RepositoryFactory.UserRepository.Register(new User { Username = rl.Username, Password = rl.Password });
+
+                    OnUserLoggedIn(user);
+                }
+                catch (UnsecurePasswordException)
+                {
+                    this.Send(MessageProtocols.Fail, ResponseCodes.Unsecure_Password);
+                }
+                catch (UsernameIsTakenException)
+                {
+                    this.Send(MessageProtocols.Fail, ResponseCodes.Username_Taken);
+                }
+            }
+        }
+
         private void LoginCommand(NetworkMessage message)
         {
             if (message.TryGetObject<LoginRequest>(out LoginRequest lr))
@@ -46,15 +69,7 @@ namespace Shared
                 if(user == null)
                     this.Send(MessageProtocols.Fail, ResponseCodes.Bad_Login);
                 else
-                {
-                    User = user;
-                    LoginSuccess success = new LoginSuccess();
-                    success.Users = server.ConnectedUsers();
-
-                    Send(MessageProtocols.LoginSuccess, success);
-                    // Tell client sucess
-                    // Tell other clients another user has logged in
-                }
+                    OnUserLoggedIn(user);
             }
         }
 
@@ -79,29 +94,19 @@ namespace Shared
             if (idle != null)
                 idle.Pong();
         }
-        /*
-        private void SetUsernameCommand(NetworkMessage message)
-        {
-            if (message.TryGetObject<string>(out string username))
-            {
-
-                var usernameToUse = username;
-                if (server.IsUsernameTaken(usernameToUse))
-                {
-                    Send(MessageProtocols.UsernameTaken);
-                }
-                else
-                {
-                    var oldUsername = Username;
-                    Username = usernameToUse;
-                    server.UsernameWasChanged(oldUsername, Username);
-                    server.Broadcast(MessageProtocols.UsernameChanged, oldUsername, Username);
-                }
-            }
-        }
-        */
         #endregion
-       
+
+        private void OnUserLoggedIn(User user)
+        {
+            User = user;
+            LoginSuccess success = new LoginSuccess();
+            success.Users = server.ConnectedUsers();
+
+            Send(MessageProtocols.LoginSuccess, success);
+            //TODO Tell other clients another user has logged in
+        }
+
+
         protected override void EstablishConnection(NetworkMessage message)
         {
             //Generate symmetric key + IV, save it and encrypt it with the given public assymetric key and send it to the client.   

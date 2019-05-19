@@ -64,6 +64,16 @@ namespace Shared.Network
             }
         }
 
+        public void Ping()
+        {
+            Send(MessageProtocols.Ping, true);
+        }
+
+        public void Pong()
+        {
+            Send(MessageProtocols.Pong, true);
+        }
+
         public delegate void OnConnectionDisconnect();
         public event OnConnectionDisconnect ConnectionDisconnect;
 
@@ -99,7 +109,7 @@ namespace Shared.Network
         private NetworkMessage GetNetworkMessage(string messageIn)
         {
             List<string> arguments = NetworkUtil.RemoveEscape(messageIn);
-            Console.WriteLine();
+            Console.WriteLine(messageIn);
 
             if (cipher != null)
                 for (int i = 0; i < arguments.Count(); i++)
