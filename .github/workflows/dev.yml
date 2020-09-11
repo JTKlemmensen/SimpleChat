@@ -25,7 +25,7 @@ jobs:
         run: |
           for file in src/*; do
             echo "$file"
-            if [ "$file" != "Client" ]; then 
+            if [ "$file" != "src/Client" ]; then 
               dotnet build $file
             fi
           done
