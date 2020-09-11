@@ -24,12 +24,15 @@ jobs:
       - name: Build projects
         run: |
           for file in src/*; do
-            echo "$file"
-            if [ "$file" != "src/Client" ]; then 
+            if [ "$file" != "src/Client" && "$file" != "src/Shared" ]; then     # Client can only be compiled on windows & Shared is a shared project
               dotnet build $file
             fi
           done
           
-#      - name: Test projects
-#        run: |
-#          dotnet test
+      - name: Test projects
+        run: |
+          for file in test/*; do
+            if [ "$file" != "test/Client.Test" ]; then 
+              dotnet test $file
+            fi
+          done
