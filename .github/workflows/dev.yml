@@ -7,32 +7,18 @@ on:
       - '!master'   # excludes master
 
 jobs:
-  build:
-    runs-on: windows-latest
-    steps:
-      - uses: actions/checkout@v2
-
-      - name: Build wpf project
-        run: |
-          dotnet build src/Client
-
-      - name: Build wpf project
-        run: |
-          dotnet test test/Client.Test
-                
   linux-build:
     runs-on: ubuntu-latest
-    needs: [build]
     steps:
       - uses: actions/checkout@v2
 
-      - name: Build projects
-        run: |
-          for file in src/*; do
-            if [ "$file" != "src/Client" ] && [ "$file" != "src/Shared" ]; then     # Client can only be compiled on windows & Shared is a shared project
-              dotnet build $file
-            fi
-          done
+#      - name: Build projects
+#        run: |
+#          for file in src/*; do
+#            if [ "$file" != "src/Client" ] && [ "$file" != "src/Shared" ]; then     # Client can only be compiled on windows & Shared is a shared project
+#              dotnet build $file
+#            fi
+#          done
           
       - name: Test projects
         run: |
@@ -41,3 +27,16 @@ jobs:
               dotnet test $file
             fi
           done
+  windows-build:
+    runs-on: windows-latest
+    needs: [linux-build]
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build wpf project
+        run: |
+          dotnet build src/Client
+
+      - name: Test wpf project
+        run: |
+          dotnet test test/Client.Test
