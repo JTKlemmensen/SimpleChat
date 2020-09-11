@@ -7,17 +7,22 @@ on:
       - '!master'   # excludes master
 
 jobs:
-#  build:
-#    runs-on: windows-latest
-#    steps:
-#      - uses: actions/checkout@v2
-#
-#      - name: Build projects
-#        run: dotnet build
+  build:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build wpf project
+        run: |
+          dotnet build src/Client
+
+      - name: Build wpf project
+        run: |
+          dotnet test test/Client.Test
                 
   linux-build:
     runs-on: ubuntu-latest
-#    needs: [build]
+    needs: [build]
     steps:
       - uses: actions/checkout@v2
 
