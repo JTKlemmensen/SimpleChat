@@ -24,7 +24,7 @@ jobs:
       - name: Build projects
         run: |
           for file in src/*; do
-            if [ "$file" != "src/Client" && "$file" != "src/Shared" ]; then     # Client can only be compiled on windows & Shared is a shared project
+            if [ "$file" != "src/Client" ] && [ "$file" != "src/Shared" ]; then     # Client can only be compiled on windows & Shared is a shared project
               dotnet build $file
             fi
           done
