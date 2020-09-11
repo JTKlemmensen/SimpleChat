@@ -24,7 +24,8 @@ jobs:
       - name: Build projects
         run: |
           for file in src/*; do
-            if [ "$file" != "Client"]; then 
+            echo "$file"
+            if [ "$file" != "Client" ]; then 
               dotnet build $file
             fi
           done
