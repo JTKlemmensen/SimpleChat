@@ -1,0 +1,21 @@
+name: dev
+
+on:
+  push:
+    branches: 
+      - '**'        # matches every branch
+      - '!master'   # excludes master
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Build projects
+        run: dotnet build
+
+      - name: Test projects
+        run: |
+          dotnet test
