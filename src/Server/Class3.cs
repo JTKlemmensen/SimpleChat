@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Client
 {
-    public class Class1
+    public class Class3
     {
         public int Plus(int one, int two)
         {

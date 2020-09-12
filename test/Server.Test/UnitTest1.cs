@@ -8,7 +8,7 @@ namespace Client.Test
         [Fact]
         public void Test1()
         {
-            var c = new Class1();
+            var c = new Class3();
 
             var result = c.Plus(1, 2);
 
