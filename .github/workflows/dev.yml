@@ -16,7 +16,7 @@ jobs:
         run: |
           for file in test/*; do
             if [ "$file" != "test/Client.Test" ]; then 
-              dotnet test $file
+              dotnet test $file /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
             fi
           done
 
