@@ -4,5 +4,7 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
+  <ItemGroup>
+    <Compile Include="Class1.cs" />
+  </ItemGroup>
 </Project>
