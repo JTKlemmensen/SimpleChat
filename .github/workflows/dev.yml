@@ -21,7 +21,8 @@ jobs:
             fi
           done
 
-
+      - name: clean up
+        uses: codecov/codecov-action@v1
 
   windows-build:
     runs-on: windows-latest
