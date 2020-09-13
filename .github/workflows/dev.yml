@@ -1,7 +1,7 @@
 name: dev
 
 on:
-  push:
+  pull_request:
     branches: 
       - '**'        # matches every branch
       - '!master'   # excludes master
@@ -11,14 +11,18 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
-          
+      - uses: codecov/codecov-action@v1
+
       - name: Test projects
         run: |
           for file in test/*; do
             if [ "$file" != "test/Client.Test" ]; then 
-              dotnet test $file
+              dotnet test $file /p:CollectCoverage=true /p:CoverletOutputFormat=cobertura
             fi
           done
+
+      - name: clean up
+        uses: codecov/codecov-action@v1
 
   windows-build:
     runs-on: windows-latest
